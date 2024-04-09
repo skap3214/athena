@@ -46,12 +46,10 @@ const FileUploader = ({ focus }: FileUploaderProps) => {
     setIsDragOver(false);
 
     const droppedFile = event.dataTransfer.files[0];
-    if (droppedFile && droppedFile.type === "application/csv") {
+    if (droppedFile) {
       setFile(droppedFile);
       handleUpload(droppedFile);
-    } else {
-      toast.error("Invalid file type. Please drop a CSV file.");
-    }
+    };
   };
 
   const handleChat = () => {};
@@ -62,7 +60,7 @@ const FileUploader = ({ focus }: FileUploaderProps) => {
       ? "Drop file here"
       : file
         ? "File uploaded"
-        : "Drag and drop your CSV file here";
+        : "Drag and drop your file here";
 
   return (
     <div className="p-2 h-full">
