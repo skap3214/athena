@@ -24,7 +24,7 @@ export default function Component() {
           className="flex-1"
           value={value}
           onChange={(e) => setValue(e.target.value)}
-          placeholder="https://www.youtube.com/watch?v=dQw4w9WgXcQ&pp=ygUJcmljayByb2xs..."
+          placeholder="Type something or paste a YouTube video link"
         />
         <div className="flex w-full justify-between">
           <div>
