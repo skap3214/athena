@@ -87,7 +87,7 @@ const FileUploader = ({ focus }: FileUploaderProps) => {
           ) : (
             <Plus
               className={cn(
-                "h-10 w-10 text-neutral-500 duration-500 transition-all",
+                "h-12 w-12 text-neutral-500 duration-500 transition-all",
                 focus &&
                   "font-extrabold text-neutral-700 dark:text-neutral-300",
               )}
@@ -95,7 +95,7 @@ const FileUploader = ({ focus }: FileUploaderProps) => {
           )}
           <span
             className={cn(
-              "text-sm text-neutral-400 duration-500 transition-all dark:text-neutral-300",
+              "text-lg text-neutral-400 duration-500 transition-all dark:text-neutral-300",
               focus && "font-bold text-neutral-800 dark:text-neutral-300",
             )}
           >
@@ -105,12 +105,10 @@ const FileUploader = ({ focus }: FileUploaderProps) => {
             <></>
           ) : !file ? (
             <>
-              <span className="text-xs text-neutral-400 dark:text-neutral-300">
-                or
-              </span>
+              <span className="text-neutral-400 dark:text-neutral-300">or</span>
               <div
                 className={cn(
-                  "border dark:border-neutral-700 hover:bg-neutral-200 dark:hover:bg-neutral-700 px-2 duration-500 transition-all py-1.5 rounded-lg",
+                  "border dark:border-neutral-700 text-xl hover:bg-neutral-200 dark:hover:bg-neutral-700 px-2 duration-500 transition-all py-1.5 rounded-lg",
                   focus &&
                     "border-2 border-neutral-600 dark:border-neutral-300",
                 )}
