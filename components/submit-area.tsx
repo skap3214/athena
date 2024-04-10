@@ -88,7 +88,7 @@ const SubmitArea = ({ handleSubmit, value, setValue }: SubmitAreaProps) => {
               </label>
             </div>
             <div className="flex space-x-1 mb-8">
-              <div className="h-full mt-10 flex items-center justify-center">
+              <div className="h-full flex items-center justify-center">
                 {value &&
                   (checkInputType(value) ? (
                     <FaYoutube className="h-5 mt-0.5 w-5" />
