@@ -4,6 +4,7 @@ import "./globals.css";
 import { Toaster } from "sonner";
 import Hero from "@/components/hero";
 import { ThemeProvider } from "next-themes";
+import { Analytics } from '@vercel/analytics/react';
 
 export const metadata: Metadata = {
   title: "athena",
@@ -19,6 +20,7 @@ export default function RootLayout({
     <html lang="en">
       <body className={GeistSans.className}>
         <ThemeProvider attribute="class" storageKey="theme">
+          <Analytics />
           <Hero>{children}</Hero>
           <Toaster />
         </ThemeProvider>

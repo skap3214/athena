@@ -32,7 +32,6 @@ export default function Component() {
       }
       router.push("/graph");
     } catch (err) {
-      console.log(err);
       toast.error("Internal server error");
       setLoading(false);
     }
