@@ -2,7 +2,7 @@
 import { Document } from "langchain/document";
 import { extractRelations, loadFromText, loadFromYoutubeLink, loadFromPDF } from "./extract";
 import { insertRelations } from "./insert";
-import { getAllEdges, getAllNodes } from "@/supabase/actions";
+import { filterNewDocuments, getAllEdges, getAllNodes } from "@/supabase/actions";
 import { Node, Edge } from "@/types";
 
 export async function updateGraph(text?: string, url?: string, file?: File): Promise<void> {
@@ -23,6 +23,9 @@ export async function updateGraph(text?: string, url?: string, file?: File): Pro
             documents = await loadFromText(text!);
         }
     }
+
+    // Make sure documents are not duplicate
+    documents = await filterNewDocuments(documents);
 
     // Extract relations
     const relations = await extractRelations(documents);

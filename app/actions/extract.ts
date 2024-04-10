@@ -1,5 +1,6 @@
 import { Document } from "langchain/document";
 import { PDFLoader } from "langchain/document_loaders/fs/pdf";
+import { YoutubeLoader } from "langchain/document_loaders/web/youtube";
 import { RecursiveCharacterTextSplitter } from "langchain/text_splitter";
 import { ChatOpenAI } from "@langchain/openai";
 import { ChatPromptTemplate } from "@langchain/core/prompts";
@@ -86,8 +87,10 @@ export async function loadFromPDF(file: File): Promise<Document[]> {
         // Load the PDF using the temporary file path
         const loader = new PDFLoader(tempFilePath);
         const docs = await loader.load();
-        return docs;
-    } catch (error) {
+        const documents = await splitter.splitDocuments(docs);
+        return documents;
+    } catch (error: any) {
+        fs.unlinkSync(tempFilePath);
         throw new Error(`Failed to load PDF: ${error.message}`);
     } finally {
         // Delete the temporary file

@@ -1,5 +1,6 @@
 import { Node, Edge } from "@/types";
 import { createClient } from "@supabase/supabase-js";
+import { Document } from "langchain/document";
 
 // Create a single supabase client for interacting with your database
 const client = createClient(
@@ -83,6 +84,27 @@ export async function insertEdge(
 
     return insertedEdge.id;
   }
+}
+
+export async function filterNewDocuments(documents: Document[]): Promise<Document[]> {
+  const pageContents = documents.map((doc) => doc.pageContent);
+
+  const { data: existingEdges, error } = await client
+    .from('edges')
+    .select('page_content')
+    .in('page_content', pageContents);
+
+  if (error) {
+    throw error;
+  }
+
+  const existingPageContents = new Set(existingEdges.map((edge) => edge.page_content));
+
+  const newDocuments = documents.filter(
+    (doc) => !existingPageContents.has(doc.pageContent)
+  );
+
+  return newDocuments;
 }
 
 export async function getAllNodes(): Promise<Node[]> {
