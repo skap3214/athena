@@ -23,7 +23,7 @@ export default function Component() {
       <h1 className="text-3xl font-bold tracking-tighter sm:text-5xl xl:text-6xl/none">
         athena.
       </h1>
-      <h2 className="text-md md:text-xl mt-2 font-light text-primary/50">
+      <h2 className="text-md md:text-xl mt-2 font-light text-primary/60">
         generate. visualize. interact.
       </h2>
       <form
@@ -46,7 +46,7 @@ export default function Component() {
                 <CaseUpper className="h-5 mt-1.5 w-5" />
               ))}
           </div>
-          <Button size="sm" variant="ghost">
+          <Button size="sm" className="dark:hover:bg-transparent/30" variant="ghost">
             <ArrowRight className="h-5 w-5" />
           </Button>
         </div>
