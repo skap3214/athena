@@ -43,7 +43,7 @@ export default function Component() {
         athena.
       </h1>
       <h2 className="text-md md:text-xl mt-2 font-light text-primary/60">
-        generate. visualize. interact.
+        graph of knowledge. made by you.
       </h2>
       {loading ? (
         <Loading />

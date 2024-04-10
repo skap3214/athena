@@ -71,7 +71,7 @@ const SubmitArea = ({ value, setValue, submit }: SubmitAreaProps) => {
   //     ? `${file.name} uploaded`
   //     : "Drop a file, type or input YouTube link";
 
-  const labelText = "Type anything or Input YouTube link";
+  const labelText = "Add your text or youtube link here.";
 
   return (
     <>
@@ -81,10 +81,10 @@ const SubmitArea = ({ value, setValue, submit }: SubmitAreaProps) => {
       >
         <label
           className="w-full"
-          // onDragOver={handleDragOver}
-          // onDragEnter={handleDragEnter}
-          // onDragLeave={handleDragLeave}
-          // onDrop={handleDrop}
+        // onDragOver={handleDragOver}
+        // onDragEnter={handleDragEnter}
+        // onDragLeave={handleDragLeave}
+        // onDrop={handleDrop}
         >
           <Textarea
             disabled={!!file}

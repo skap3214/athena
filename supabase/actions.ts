@@ -89,7 +89,7 @@ export async function insertEdge(
 export async function filterNewDocuments(
   documents: Document[],
 ): Promise<Document[]> {
-  const batchSize = 250;
+  const batchSize = 100;
   const newDocuments: Document[] = [];
 
   for (let i = 0; i < documents.length; i += batchSize) {
@@ -98,7 +98,7 @@ export async function filterNewDocuments(
 
     const { data: existingEdges, error } = await client
       .from("edges")
-      .select("page_content")
+      .select()
       .in("page_content", pageContents);
 
     if (error) {
@@ -120,22 +120,54 @@ export async function filterNewDocuments(
 }
 
 export async function getAllNodes(): Promise<Node[]> {
-  // Retrieve all nodes from the "nodes" table
-  const { data: nodes, error } = await client.from("nodes").select("*");
+  const pageSize = 600;
+  let page = 0;
+  let nodes: Node[] = [];
 
-  if (error) {
-    throw error;
+  while (true) {
+    const { data: pageNodes, error } = await client
+      .from('nodes')
+      .select('*')
+      .range(page * pageSize, (page + 1) * pageSize - 1);
+
+    if (error) {
+      throw error;
+    }
+
+    nodes = [...nodes, ...pageNodes];
+
+    if (pageNodes.length < pageSize) {
+      break;
+    }
+
+    page++;
   }
 
   return nodes;
 }
 
 export async function getAllEdges(): Promise<Edge[]> {
-  // Retrieve all edges from the "edges" table
-  const { data: edges, error } = await client.from("edges").select("*");
+  const pageSize = 600;
+  let page = 0;
+  let edges: Edge[] = [];
 
-  if (error) {
-    throw error;
+  while (true) {
+    const { data: pageEdges, error } = await client
+      .from('edges')
+      .select('*')
+      .range(page * pageSize, (page + 1) * pageSize - 1);
+
+    if (error) {
+      throw error;
+    }
+
+    edges = [...edges, ...pageEdges];
+
+    if (pageEdges.length < pageSize) {
+      break;
+    }
+
+    page++;
   }
 
   return edges;

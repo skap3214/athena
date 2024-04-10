@@ -1,23 +1,25 @@
 import { RecommendValueProps } from "@/types";
 import { MoveUpRight } from "lucide-react";
 import { Button } from "./ui/button";
+import { data } from "@/data";
+
 export const recommendations = [
   {
-    label: "What is NextJS?",
-    value: "https://www.youtube.com/watch?v=vwSlYG7hFk0&pp=ygUGbmV4dGpz",
+    label: "But what is a neural network? 3b1b",
+    value: "https://www.youtube.com/watch?v=aircAruvnKk",
   },
   {
-    label: "What is NextJS?",
-    value: "https://www.youtube.com/watch?v=vwSlYG7hFk0&pp=ygUGbmV4dGpz",
+    label: "Nasa 2025 Mission Fact Sheet",
+    value: data,
   },
   {
-    label: "What is NextJS?",
-    value: "https://www.youtube.com/watch?v=vwSlYG7hFk0&pp=ygUGbmV4dGpz",
+    label: "FTX Bankruptcy Explained!",
+    value: "https://www.youtube.com/watch?v=zTFhnpf-IE0",
   },
-  {
-    label: "What is NextJS?",
-    value: "https://www.youtube.com/watch?v=vwSlYG7hFk0&pp=ygUGbmV4dGpz",
-  },
+  // {
+  //   label: "What is NextJS?",
+  //   value: "https://www.youtube.com/watch?v=vwSlYG7hFk0&pp=ygUGbmV4dGpz",
+  // },
 ];
 
 const RecommendValue = ({ handleClick }: RecommendValueProps) => {
