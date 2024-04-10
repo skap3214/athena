@@ -8,6 +8,7 @@ import { ArrowRight, CaseUpper } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { FormEvent, useState } from "react";
 import { FaYoutube } from "react-icons/fa";
+import { updateGraph } from "./actions";
 
 export default function Component() {
   const router = useRouter();
@@ -20,6 +21,14 @@ export default function Component() {
   };
 
   const submit = (input: string) => {
+    const isYoutube = checkInputType(value);
+    if (isYoutube) {
+      console.log("Updating Graph");
+      updateGraph(undefined, value);
+    } else {
+      console.log("Updating Graph");
+      updateGraph(value);
+    }
     router.push("/graph");
   };
 

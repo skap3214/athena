@@ -21,21 +21,22 @@ export async function insertNode(
   if (error && error.code !== "PGRST116") {
     throw error;
   }
-
+  console.log("existingNode: ", existingNode);
   if (existingNode) {
     // Node already exists, return the existing node ID
+    console.log("Returning: ", existingNode.id);
     return existingNode.id;
   } else {
     // Insert a new node
     const { data: insertedNode, error: insertError } = await client
       .from("nodes")
       .insert({ data, metadata })
-      .single();
+      .select().single();
 
     if (insertError) {
       throw insertError;
     }
-
+    console.log("insertedNode: ", insertedNode);
     return insertedNode.id;
   }
 }
@@ -61,7 +62,6 @@ export async function insertEdge(
   if (error && error.code !== "PGRST116") {
     throw error;
   }
-
   if (existingEdge) {
     // Edge already exists, return the existing edge ID
     return existingEdge.id;
@@ -69,13 +69,14 @@ export async function insertEdge(
     // Insert a new edge
     const { data: insertedEdge, error: insertError } = await client
       .from("edges")
-      .insert({
+      .upsert({
         data,
         from: fromNodeId,
         to: toNodeId,
         page_content: pageContent,
         metadata,
       })
+      .select()
       .single();
 
     if (insertError) {
