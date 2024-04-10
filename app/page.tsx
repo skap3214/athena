@@ -50,8 +50,23 @@ export default function Component() {
       <h2 className="text-md md:text-xl mt-2 font-light text-primary/60">
         generate. visualize. interact.
       </h2>
-      {loading ? (
-        <Image src="/loader.svg" alt="loader" height={150} width={150} />
+      {!loading ? (
+        <>
+          <Image
+            src="/loader"
+            alt="loader"
+            className="dark:block hidden"
+            height={150}
+            width={150}
+          />
+          <Image
+            src="/loader-dark.svg"
+            alt="loader"
+            className="dark:hidden"
+            height={150}
+            width={150}
+          />
+        </>
       ) : (
         <>
           <form
