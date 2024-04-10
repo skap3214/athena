@@ -13,10 +13,16 @@ import { FaYoutube } from "react-icons/fa";
 import { Button } from "./ui/button";
 import { FormEvent, useState } from "react";
 import { cn } from "@/lib/utils";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "./ui/tooltip";
 
 const SubmitArea = ({ value, setValue, submit }: SubmitAreaProps) => {
   const [file, setFile] = useState<File | null>(null);
-  const [isDragOver, setIsDragOver] = useState(false);
+  // const [isDragOver, setIsDragOver] = useState(false);
 
   const handleChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.files) {
@@ -36,35 +42,37 @@ const SubmitArea = ({ value, setValue, submit }: SubmitAreaProps) => {
     submit(value);
   };
 
-  const handleDragOver = (event: React.DragEvent<HTMLLabelElement>) => {
-    event.preventDefault();
-    setIsDragOver(true);
-  };
+  // const handleDragOver = (event: React.DragEvent<HTMLLabelElement>) => {
+  //   event.preventDefault();
+  //   setIsDragOver(true);
+  // };
 
-  const handleDragEnter = (event: React.DragEvent<HTMLLabelElement>) => {
-    event.preventDefault();
-    setIsDragOver(true);
-  };
+  // const handleDragEnter = (event: React.DragEvent<HTMLLabelElement>) => {
+  //   event.preventDefault();
+  //   setIsDragOver(true);
+  // };
 
-  const handleDragLeave = () => {
-    setIsDragOver(false);
-  };
+  // const handleDragLeave = () => {
+  //   setIsDragOver(false);
+  // };
 
-  const handleDrop = (event: React.DragEvent<HTMLLabelElement>) => {
-    event.preventDefault();
-    setIsDragOver(false);
-  };
+  // const handleDrop = (event: React.DragEvent<HTMLLabelElement>) => {
+  //   event.preventDefault();
+  //   setIsDragOver(false);
+  // };
 
   const handleClear = () => {
     setFile(null);
     setValue("");
   };
 
-  const labelText = isDragOver
-    ? "Drop file here"
-    : file
-      ? `${file.name} uploaded`
-      : "Drop a file, type or input YouTube link";
+  // const labelText = isDragOver
+  //   ? "Drop file here"
+  //   : file
+  //     ? `${file.name} uploaded`
+  //     : "Drop a file, type or input YouTube link";
+
+  const labelText = "Type anything or Input YouTube link";
 
   return (
     <>
@@ -74,17 +82,17 @@ const SubmitArea = ({ value, setValue, submit }: SubmitAreaProps) => {
       >
         <label
           className="w-full"
-          onDragOver={handleDragOver}
-          onDragEnter={handleDragEnter}
-          onDragLeave={handleDragLeave}
-          onDrop={handleDrop}
+          // onDragOver={handleDragOver}
+          // onDragEnter={handleDragEnter}
+          // onDragLeave={handleDragLeave}
+          // onDrop={handleDrop}
         >
           <Textarea
             disabled={!!file}
             autoFocus
             className={cn(
               "flex-1",
-              isDragOver && "bg-neutral-700 dark:bg-neutral-400",
+              // isDragOver && "bg-neutral-700 dark:bg-neutral-400",
             )}
             value={value}
             onChange={(e) => setValue(e.target.value)}
@@ -94,19 +102,26 @@ const SubmitArea = ({ value, setValue, submit }: SubmitAreaProps) => {
             <div className="h-full flex items-center justify-center space-x-1">
               <label
                 htmlFor="file-upload"
-                className="flex space-x-1.5 h-7 rounded-md p-2 cursor-pointer bg-neutral-800 dark:bg-neutral-200 dark:hover:bg-neutral-100 text-primary-foreground hover:bg-neutral-800/90"
+                className="flex space-x-1.5 h-7 rounded-md p-2 bg-neutral-800/50 dark:bg-neutral-200/50 text-primary-foreground cursor-not-allowed"
               >
-                <span className="h-full flex items-center justify-center text-sm overflow-visible">
-                  Upload
-                </span>
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger className="h-full flex items-center justify-center text-sm overflow-visible">
+                      Upload
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p>Coming soon</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
                 <Paperclip className="h-3 w-3" />
-                <input
+                {/* <input
                   accept="application/pdf"
                   type="file"
                   id="file-upload"
                   className="hidden"
                   onChange={handleChange}
-                />
+                /> */}
               </label>
               <span
                 onClick={handleClear}

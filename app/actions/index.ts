@@ -7,8 +7,13 @@ import { Node, Edge } from "@/types";
 
 export async function updateGraph(text?: string, url?: string, file?: File): Promise<void> {
     // Validate input
-    if ((!text && !url && !file) || (text && url && file)) {
-        throw new Error("Either text OR url OR file should be given");
+    let inputCount = 0;
+    if (text) inputCount++;
+    if (url) inputCount++;
+    if (file) inputCount++;
+
+    if (inputCount !== 1) {
+        throw new Error("Exactly one of text, url, or file should be provided");
     }
 
     // Convert to documents
