@@ -31,6 +31,7 @@ export default function Component() {
         className="mt-6 max-w-[600px] w-full space-y-1 flex flex-col items-end"
       >
         <Textarea
+          autoFocus
           className="flex-1"
           value={value}
           onChange={(e) => setValue(e.target.value)}
