@@ -7,9 +7,10 @@ const ForceGraphComponent = () => {
   const fgRef = useRef<any>();
 
   return (
-    <div className="h-screen">
+    <div className="max-h-screen">
       <ForceGraph3D
         ref={fgRef}
+        backgroundColor="#0A0A0A"
         graphData={data}
         nodeLabel="description"
         nodeAutoColorBy="group"
