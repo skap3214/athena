@@ -8,14 +8,17 @@ import { Button } from "./ui/button";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
 
-const SubmitArea = ({
-  handleSubmit,
-  value,
-  setValue,
-  submit,
-}: SubmitAreaProps) => {
+const SubmitArea = ({ handleSubmit, value, setValue }: SubmitAreaProps) => {
   const [file, setFile] = useState<File | null>(null);
   const [isDragOver, setIsDragOver] = useState(false);
+
+  const handleChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    if (event.target.files) {
+      const selectedFile = event.target.files[0];
+      setFile(selectedFile);
+      console.log(selectedFile);
+    }
+  };
 
   const handleDragOver = (event: React.DragEvent<HTMLLabelElement>) => {
     event.preventDefault();
@@ -76,10 +79,11 @@ const SubmitArea = ({
                 </span>
                 <Paperclip className="h-3 w-3" />
                 <input
-                  accept="text/csv"
+                  accept="application/pdf"
                   type="file"
                   id="file-upload"
                   className="hidden"
+                  onChange={handleChange}
                 />
               </label>
             </div>

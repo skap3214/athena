@@ -52,7 +52,6 @@ export default function Component() {
       ) : (
         <SubmitArea
           handleSubmit={handleSubmit}
-          submit={submit}
           value={value}
           setValue={setValue}
         />

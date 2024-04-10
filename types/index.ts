@@ -33,5 +33,4 @@ export type SubmitAreaProps = {
   handleSubmit: FormEventHandler<HTMLFormElement>;
   value: string;
   setValue: Dispatch<SetStateAction<string>>;
-  submit: (value: string) => void;
 };
