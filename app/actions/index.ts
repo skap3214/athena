@@ -32,14 +32,17 @@ export async function updateGraph(
     // documents = await loadFromPDF(file);
   } else {
     if (url) {
+      console.log("Loading youtube...")
       documents = await loadFromYoutubeLink(url);
       console.log("Documents extracted.");
     } else {
+      console.log("Loading text...")
       documents = await loadFromText(text!);
     }
   }
 
   // Make sure documents are not duplicate
+  console.log("Filtering documents")
   documents = await filterNewDocuments(documents);
   console.log("Documents filtered.");
 

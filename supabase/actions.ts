@@ -89,7 +89,7 @@ export async function insertEdge(
 export async function filterNewDocuments(
   documents: Document[],
 ): Promise<Document[]> {
-  const batchSize = 100;
+  const batchSize = 1;
   const newDocuments: Document[] = [];
 
   for (let i = 0; i < documents.length; i += batchSize) {
