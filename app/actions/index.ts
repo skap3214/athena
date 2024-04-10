@@ -3,6 +3,7 @@ import { Document } from "langchain/document";
 import { extractRelations, loadFromText, loadFromYoutubeLink } from "./extract";
 import { insertRelations } from "./insert";
 import { getAllEdges, getAllNodes } from "@/supabase/actions";
+import { Node, Edge } from "@/types";
 
 export async function updateGraph(text?: string, url?: string): Promise<void> {
     // Validate input
@@ -13,13 +14,9 @@ export async function updateGraph(text?: string, url?: string): Promise<void> {
     // Convert to documents
     let documents: Document[];
     if (url) {
-        console.log("Youtube link detected");
         documents = await loadFromYoutubeLink(url);
-        console.log("documents loaded: ", documents.length)
     } else {
-        console.log("Text detected");
         documents = await loadFromText(text!);
-        console.log("documents loaded: ", documents.length)
     }
 
     // Extract relations
@@ -29,16 +26,23 @@ export async function updateGraph(text?: string, url?: string): Promise<void> {
     return insertRelations(documents, relations);
 }
 
-// export async function getGraph() {
-//     const edges = await getAllEdges();
-//     const nodes = await getAllNodes();
-//     console.log(edges);
-//     console.log(nodes);
+export async function getGraph(): Promise<any> {
+    const edges = await getAllEdges();
+    const nodes = await getAllNodes();
 
-//     const nodesFormatted = nodes.map(node => { id: node.id, description: node.data })
-//     const edgesFormatted = edges.map(edge => {})
-//     const graph = {
-//         'nodes': nodesFormatted,
-//         'links': edges
-//     }
-// }
+    const formattedNodes = nodes.map((node: Node) => ({
+        id: node.id,
+        description: node.data,
+    }));
+
+    const formattedEdges = edges.map((edge: Edge) => ({
+        source: edge.from,
+        target: edge.to,
+    }));
+
+    const graphData = {
+        nodes: formattedNodes,
+        links: formattedEdges,
+    };
+    return graphData;
+}

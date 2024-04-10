@@ -21,10 +21,8 @@ export async function insertNode(
   if (error && error.code !== "PGRST116") {
     throw error;
   }
-  console.log("existingNode: ", existingNode);
   if (existingNode) {
     // Node already exists, return the existing node ID
-    console.log("Returning: ", existingNode.id);
     return existingNode.id;
   } else {
     // Insert a new node
@@ -36,7 +34,6 @@ export async function insertNode(
     if (insertError) {
       throw insertError;
     }
-    console.log("insertedNode: ", insertedNode);
     return insertedNode.id;
   }
 }

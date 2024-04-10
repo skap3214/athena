@@ -43,12 +43,11 @@ const extract_chain = prompt.pipe(model).pipe(outputParser);
 
 export async function loadFromYoutubeLink(url: string): Promise<Document[]> {
     const loader = YoutubeLoader.createFromUrl(url, {
-        addVideoInfo: true,
+        addVideoInfo: false,
     });
 
     const documents = await loader.load();
 
-    console.log(documents);
 
     return documents;
 }
@@ -72,6 +71,5 @@ export async function splitDocuments(
 export async function extractRelations(documents: Document[]): Promise<Map<string, any>[]> {
     const relations = await extract_chain.batch(documents.map(doc => ({ input: doc.pageContent })));
     const relationsOutput = relations.map(rel_list => JSON.parse(rel_list))
-    console.log("Relations extracted: ", relationsOutput.length)
     return relationsOutput;
 }

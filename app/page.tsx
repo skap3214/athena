@@ -23,10 +23,8 @@ export default function Component() {
   const submit = (input: string) => {
     const isYoutube = checkInputType(value);
     if (isYoutube) {
-      console.log("Updating Graph");
       updateGraph(undefined, value);
     } else {
-      console.log("Updating Graph");
       updateGraph(value);
     }
     router.push("/graph");

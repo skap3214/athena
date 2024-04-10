@@ -1,20 +1,38 @@
 "use client";
-import { data } from "@/data";
-import { useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { ForceGraph3D } from "react-force-graph";
+import { getGraph } from "../actions";
 
 const ForceGraphComponent = () => {
   const fgRef = useRef<any>();
+  const [graph, setGraph] = useState<any>(null);
+
+  useEffect(() => {
+    const fetchGraph = async () => {
+      try {
+        const graphData = await getGraph();
+        setGraph(graphData);
+      } catch (error) {
+        console.error('Error fetching graph data:', error);
+      }
+    };
+
+    fetchGraph();
+  }, []);
 
   return (
     <div className="max-h-screen">
-      <ForceGraph3D
-        ref={fgRef}
-        backgroundColor="#0A0A0A"
-        graphData={data}
-        nodeLabel="description"
-        nodeAutoColorBy="group"
-      />
+      {graph ? (
+        <ForceGraph3D
+          ref={fgRef}
+          backgroundColor="#0A0A0A"
+          graphData={graph}
+          nodeLabel="description"
+          nodeAutoColorBy="group"
+        />
+      ) : (
+        <div>Loading...</div>
+      )}
     </div>
   );
 };
