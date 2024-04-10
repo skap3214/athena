@@ -30,7 +30,7 @@ const Header = () => {
         </SheetTrigger>
         <SheetContent className="justify-between flex flex-col">
           <SheetHeader>
-            <SheetTitle>Chat History</SheetTitle>
+            <SheetTitle>Chat</SheetTitle>
           </SheetHeader>
           <div className="flex flex-col justify-center items-center h-full py-4">
             <div className="text-neutral-500">Coming soon!</div>

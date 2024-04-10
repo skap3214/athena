@@ -1,4 +1,5 @@
 "use client";
+import RecommendValue from "@/components/recommend-value";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import getUser from "@/hooks/get-user";
@@ -15,6 +16,10 @@ export default function Component() {
 
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
+    submit(value);
+  };
+
+  const submit = (input: string) => {
     router.push("/graph");
   };
 
@@ -46,11 +51,16 @@ export default function Component() {
                 <CaseUpper className="h-5 mt-1.5 w-5" />
               ))}
           </div>
-          <Button size="sm" className="dark:hover:bg-transparent/30" variant="ghost">
+          <Button
+            size="sm"
+            className="dark:hover:bg-transparent/30"
+            variant="ghost"
+          >
             <ArrowRight className="h-5 w-5" />
           </Button>
         </div>
       </form>
+      <RecommendValue handleClick={(value) => submit(value)} />
     </section>
   );
 }

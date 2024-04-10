@@ -22,3 +22,7 @@ export type Edge = {
   page_content: string;
   metadata?: Record<string, any>;
 };
+
+export type RecommendValueProps = {
+  handleClick: (value: string) => void;
+};
