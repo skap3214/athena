@@ -19,6 +19,7 @@ export async function updateGraph(text?: string, url?: string, file?: File): Pro
     } else {
         if (url) {
             documents = await loadFromYoutubeLink(url);
+            console.log("Documents extracted.");
         } else {
             documents = await loadFromText(text!);
         }
@@ -26,6 +27,7 @@ export async function updateGraph(text?: string, url?: string, file?: File): Pro
 
     // Make sure documents are not duplicate
     documents = await filterNewDocuments(documents);
+    console.log("Documents filtered.");
 
     // Extract relations
     const relations = await extractRelations(documents);

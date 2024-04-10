@@ -15,6 +15,9 @@ export async function insertRelations(
       const documentRelations = batchRelations[index];
 
       for (const relation of documentRelations) {
+        if (!relation) {
+          continue;
+        }
         const { node_1, node_2, edge } = relation;
 
         // Insert nodes

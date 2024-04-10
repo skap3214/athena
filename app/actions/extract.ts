@@ -8,6 +8,7 @@ import { StringOutputParser } from "@langchain/core/output_parsers";
 import fs from 'fs';
 import os from 'os';
 import path from 'path';
+import { YoutubeGrabTool } from "@/lib/youtube";
 
 
 function getVideoId(videoUrl: string): string {
@@ -39,7 +40,7 @@ Format your output as a list of json. Each element of the list contains a pair o
        "edge": "relationship between the two concepts, node_1 and node_2 in one or two sentences"
    }}, {{...}}
 ]
-`;
+If you cannot extract any ontologies from the context, respond ONLY with 'None'`;
 const prompt = ChatPromptTemplate.fromMessages([
     ["system", contextString],
     ["human", "{input}"],
@@ -48,13 +49,27 @@ const model = new ChatOpenAI({ temperature: 0.1 });
 const outputParser = new StringOutputParser();
 const extract_chain = prompt.pipe(model).pipe(outputParser);
 
+// export async function loadFromYoutubeLink(url: string): Promise<Document[]> {
+//     const loader = YoutubeLoader.createFromUrl(url, {
+//         addVideoInfo: false,
+//     });
+
+//     const documents = await loader.load();
+
+//     return documents;
+// }
+
 export async function loadFromYoutubeLink(url: string): Promise<Document[]> {
-    const loader = YoutubeLoader.createFromUrl(url, {
-        addVideoInfo: false,
-    });
+    const videoId = getVideoId(url);
+    const transcript = await YoutubeGrabTool.fetchTranscript(videoId);
+    let documents: Document[] = [];
 
-    const documents = await loader.load();
+    for (const item of transcript) {
+        const document = new Document({ pageContent: item.text, metadata: { start: item.duration, source: videoId } });
+        documents.push(document);
+    }
 
+    documents = await splitter.splitDocuments(documents)
     return documents;
 }
 
@@ -121,14 +136,19 @@ export async function extractRelations(
     );
 
     const relationsOutput = relations.map((rel_list) => {
-        // Check if the rel_list is in markdown format
         if (rel_list.startsWith("```json") && rel_list.endsWith("```")) {
             // Remove the markdown formatting
+            console.log(rel_list);
             const jsonString = rel_list.slice(7, -3).trim();
             return JSON.parse(jsonString);
         } else {
-            // Assume the rel_list is a direct JSON string
-            return JSON.parse(rel_list);
+            try {
+                // Assume the rel_list is a direct JSON string
+                return JSON.parse(rel_list);
+            } catch (error) {
+                console.log("Failed JSON parsing: ", error);
+                return [];
+            }
         }
     });
 
