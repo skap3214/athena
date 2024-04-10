@@ -1,13 +1,12 @@
 import { Document } from "langchain/document";
-import { PDFLoader } from "langchain/document_loaders/fs/pdf";
-import { YoutubeLoader } from "langchain/document_loaders/web/youtube";
+// import { PDFLoader } from "langchain/document_loaders/fs/pdf";
 import { RecursiveCharacterTextSplitter } from "langchain/text_splitter";
 import { ChatOpenAI } from "@langchain/openai";
 import { ChatPromptTemplate } from "@langchain/core/prompts";
 import { StringOutputParser } from "@langchain/core/output_parsers";
-import fs from 'fs';
-import os from 'os';
-import path from 'path';
+// import fs from 'fs';
+// import os from 'os';
+// import path from 'path';
 import { YoutubeGrabTool } from "@/lib/youtube";
 
 
@@ -73,45 +72,51 @@ export async function loadFromYoutubeLink(url: string): Promise<Document[]> {
     return documents;
 }
 
-export async function loadFromPDF(file: File): Promise<Document[]> {
-    // Generate a unique temporary file path
-    const tempFilePath = path.join(os.tmpdir(), `temp-${Date.now()}.pdf`);
+// export async function loadFromPDF(file: File): Promise<Document[]> {
+//     // Generate a unique temporary file path
+//     const tempFilePath = path.join(os.tmpdir(), `temp-${Date.now()}.pdf`);
 
-    // Write the File object to the temporary file path
-    await new Promise<void>((resolve, reject) => {
-        const fileReader = new FileReader();
+//     // Write the File object to the temporary file path
+//     await new Promise<void>((resolve, reject) => {
+//         const fileReader = new FileReader();
 
-        fileReader.onload = () => {
-            fs.writeFile(tempFilePath, new Uint8Array(fileReader.result as ArrayBuffer), (err) => {
-                if (err) {
-                    reject(err);
-                } else {
-                    resolve();
-                }
-            });
-        };
+//         fileReader.onload = () => {
+//             fs.writeFile(tempFilePath, new Uint8Array(fileReader.result as ArrayBuffer), (err) => {
+//                 if (err) {
+//                     reject(err);
+//                 } else {
+//                     resolve();
+//                 }
+//             });
+//         };
 
-        fileReader.onerror = () => {
-            reject(new Error('Failed to read the file.'));
-        };
+//         fileReader.onerror = () => {
+//             reject(new Error('Failed to read the file.'));
+//         };
 
-        fileReader.readAsArrayBuffer(file);
-    });
+//         fileReader.readAsArrayBuffer(file);
+//     });
 
-    try {
-        // Load the PDF using the temporary file path
-        const loader = new PDFLoader(tempFilePath);
-        const docs = await loader.load();
-        const documents = await splitter.splitDocuments(docs);
-        return documents;
-    } catch (error: any) {
-        fs.unlinkSync(tempFilePath);
-        throw new Error(`Failed to load PDF: ${error.message}`);
-    } finally {
-        // Delete the temporary file
-        fs.unlinkSync(tempFilePath);
-    }
-}
+//     try {
+//         // Load the PDF using the temporary file path
+//         const loader = new PDFLoader(
+//             tempFilePath,
+//             {
+//                 pdfjs: () => import("pdfjs-dist/legacy/build/pdf.js").then(m => m.default),
+//                 parsedItemSeparator: "",
+//             }
+//         );
+//         const docs = await loader.load();
+//         const documents = await splitter.splitDocuments(docs);
+//         return documents;
+//     } catch (error: any) {
+//         fs.unlinkSync(tempFilePath);
+//         throw new Error(`Failed to load PDF: ${error.message}`);
+//     } finally {
+//         // Delete the temporary file
+//         fs.unlinkSync(tempFilePath);
+//     }
+// }
 
 export async function loadFromText(text: string): Promise<Document[]> {
     const documents = await splitter.splitText(text);
@@ -138,7 +143,6 @@ export async function extractRelations(
     const relationsOutput = relations.map((rel_list) => {
         if (rel_list.startsWith("```json") && rel_list.endsWith("```")) {
             // Remove the markdown formatting
-            console.log(rel_list);
             const jsonString = rel_list.slice(7, -3).trim();
             return JSON.parse(jsonString);
         } else {

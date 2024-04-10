@@ -8,6 +8,7 @@ import SubmitArea from "@/components/submit-area";
 import Loading from "@/components/loading";
 import RecommendValue from "@/components/recommend-value";
 import CommunityGraph from "@/components/community-graph";
+// import { loadFromPDF } from "./actions/extract";
 
 export default function Component() {
   const router = useRouter();
@@ -31,6 +32,7 @@ export default function Component() {
       }
       router.push("/graph");
     } catch (err) {
+      console.log(err);
       toast.error("Internal server error");
       setLoading(false);
     }

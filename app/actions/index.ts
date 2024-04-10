@@ -1,6 +1,6 @@
 "use server";
 import { Document } from "langchain/document";
-import { extractRelations, loadFromText, loadFromYoutubeLink, loadFromPDF } from "./extract";
+import { extractRelations, loadFromText, loadFromYoutubeLink } from "./extract";
 import { insertRelations } from "./insert";
 import { filterNewDocuments, getAllEdges, getAllNodes } from "@/supabase/actions";
 import { Node, Edge } from "@/types";
@@ -13,9 +13,10 @@ export async function updateGraph(text?: string, url?: string, file?: File): Pro
 
     // Convert to documents
     let documents: Document[];
-
     if (file) {
-        documents = await loadFromPDF(file);
+        console.log("Coming soon...")
+        return;
+        // documents = await loadFromPDF(file);
     } else {
         if (url) {
             documents = await loadFromYoutubeLink(url);
