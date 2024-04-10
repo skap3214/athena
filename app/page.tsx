@@ -1,8 +1,7 @@
 "use client";
-import getUser from "@/hooks/get-user";
 import { checkInputType } from "@/lib/check-input-type";
 import { useRouter } from "next/navigation";
-import { FormEvent, useState } from "react";
+import { useState } from "react";
 import { updateGraph } from "./actions";
 import { toast } from "sonner";
 import SubmitArea from "@/components/submit-area";
@@ -12,20 +11,18 @@ import CommunityGraph from "@/components/community-graph";
 
 export default function Component() {
   const router = useRouter();
-  const user = getUser();
   const [value, setValue] = useState("");
   const [loading, setLoading] = useState(false);
 
-  const handleSubmit = (e: FormEvent) => {
-    e.preventDefault();
-    submit(value);
-  };
-
-  const submit = async (input: string) => {
+  const submit = async (input: string | File) => {
     if (!input) return;
     setValue("");
     try {
       setLoading(true);
+      if (input instanceof File) {
+        await updateGraph(undefined, undefined, input);
+        return;
+      }
       const isYoutube = checkInputType(input);
       if (isYoutube) {
         await updateGraph(undefined, input);
@@ -51,9 +48,9 @@ export default function Component() {
         <Loading />
       ) : (
         <SubmitArea
-          handleSubmit={handleSubmit}
           value={value}
           setValue={setValue}
+          submit={submit}
         />
       )}
       <RecommendValue handleClick={(value) => submit(value)} />

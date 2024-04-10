@@ -11,10 +11,10 @@ import {
 } from "lucide-react";
 import { FaYoutube } from "react-icons/fa";
 import { Button } from "./ui/button";
-import { useState } from "react";
+import { FormEvent, useState } from "react";
 import { cn } from "@/lib/utils";
 
-const SubmitArea = ({ handleSubmit, value, setValue }: SubmitAreaProps) => {
+const SubmitArea = ({ value, setValue, submit }: SubmitAreaProps) => {
   const [file, setFile] = useState<File | null>(null);
   const [isDragOver, setIsDragOver] = useState(false);
 
@@ -25,6 +25,15 @@ const SubmitArea = ({ handleSubmit, value, setValue }: SubmitAreaProps) => {
       setFile(selectedFile);
       console.log(selectedFile);
     }
+  };
+
+  const handleSubmit = (e: FormEvent) => {
+    e.preventDefault();
+    if (file) {
+      submit(file)
+      return;
+    }
+    submit(value);
   };
 
   const handleDragOver = (event: React.DragEvent<HTMLLabelElement>) => {

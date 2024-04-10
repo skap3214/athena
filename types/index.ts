@@ -1,4 +1,4 @@
-import { Dispatch, FormEventHandler, SetStateAction } from "react";
+import { Dispatch, SetStateAction } from "react";
 
 export type FileUploaderProps = {
   focus: boolean;
@@ -30,7 +30,7 @@ export type RecommendValueProps = {
 };
 
 export type SubmitAreaProps = {
-  handleSubmit: FormEventHandler<HTMLFormElement>;
   value: string;
   setValue: Dispatch<SetStateAction<string>>;
+  submit: (input: string | File) => void;
 };
