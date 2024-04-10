@@ -1,10 +1,9 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { GeistSans } from "geist/font/sans";
 import "./globals.css";
 import { Toaster } from "sonner";
 import Hero from "@/components/hero";
-
-const inter = Inter({ subsets: ["latin"] });
+import { ThemeProvider } from "next-themes";
 
 export const metadata: Metadata = {
   title: "athena",
@@ -18,9 +17,11 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={inter.className}>
-        <Hero>{children}</Hero>
-        <Toaster />
+      <body className={GeistSans.className}>
+        <ThemeProvider attribute="class">
+          <Hero>{children}</Hero>
+          <Toaster />
+        </ThemeProvider>
       </body>
     </html>
   );

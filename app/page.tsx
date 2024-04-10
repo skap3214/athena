@@ -3,13 +3,20 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import getUser from "@/hooks/get-user";
 import { checkInputType } from "@/lib/check-input-type";
-import { ArrowRight, CaseUpper, Text } from "lucide-react";
-import { useState } from "react";
+import { ArrowRight, CaseUpper } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { FormEvent, useState } from "react";
 import { FaYoutube } from "react-icons/fa";
 
 export default function Component() {
+  const router = useRouter();
   const user = getUser();
   const [value, setValue] = useState("");
+
+  const handleSubmit = (e: FormEvent) => {
+    e.preventDefault();
+    router.push("/graph");
+  };
 
   return (
     <section className="h-screen w-full flex mx-5 md:mx-10 lg:mx-20 2xl:mx-0 flex-col justify-center items-center">
@@ -19,7 +26,10 @@ export default function Component() {
       <h2 className="text-md md:text-xl mt-2 font-light text-primary/50">
         generate. visualize. interact.
       </h2>
-      <form className="mt-6 max-w-[600px] w-full space-y-1 flex flex-col items-end">
+      <form
+        onSubmit={handleSubmit}
+        className="mt-6 max-w-[600px] w-full space-y-1 flex flex-col items-end"
+      >
         <Textarea
           className="flex-1"
           value={value}
