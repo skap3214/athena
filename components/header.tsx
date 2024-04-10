@@ -13,7 +13,7 @@ import { ModeToggle } from "./theme-toggle";
 
 const Header = () => {
   return (
-    <div className="sticky z-20 bg-transparent p-2 px-4 flex flex-row justify-between top-0">
+    <div className="absolute z-20 w-full bg-transparent p-2 px-4 flex flex-row justify-between top-0">
       <div className="flex items-center justify-center h-ful">
         <span
           onClick={() => window.location.replace("/")}

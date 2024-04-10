@@ -43,9 +43,12 @@ const ForceGraphComponent = () => {
           backgroundColor={theme === "light" ? "#FFFF" : "#0A0A0A"}
           graphData={graph!}
           nodeLabel="description"
-          nodeAutoColorBy="group"
+          nodeAutoColorBy="id"
           onNodeClick={handleClick}
           showNavInfo={false}
+          linkLabel="content"
+          linkAutoColorBy="content"
+          linkWidth={2}
         />
       )}
     </div>

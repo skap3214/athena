@@ -38,6 +38,7 @@ export async function getGraph(): Promise<any> {
   const formattedEdges = edges.map((edge: Edge) => ({
     source: edge.from,
     target: edge.to,
+    content: edge.data,
   }));
 
   const graphData = {
