@@ -25,7 +25,7 @@ const Header = () => {
       </div>
       <Sheet>
         <SheetTrigger asChild>
-          <div className="border rounded-lg p-2 hover:bg-neutral-200 cursor-pointer">
+          <div className="border rounded-lg p-2 hover:bg-neutral-700 cursor-pointer">
             <Menu className="cursor-pointer1 hover:scale-105 text-neutral-300" />
           </div>
         </SheetTrigger>
