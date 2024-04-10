@@ -5,8 +5,8 @@ import { data } from "@/data";
 
 export const recommendations = [
   {
-    label: "But what is a neural network? 3b1b",
-    value: "https://www.youtube.com/watch?v=aircAruvnKk",
+    label: "OpenAI Devday",
+    value: "https://www.youtube.com/watch?v=U9mJuUkhUzk",
   },
   {
     label: "Nasa 2025 Mission Fact Sheet",
