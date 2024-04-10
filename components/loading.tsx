@@ -5,7 +5,7 @@ const Loading = () => {
   return (
     <>
       <Image
-        src="/loader"
+        src="/loader.svg"
         alt="loader"
         className="dark:block hidden"
         height={150}

@@ -21,13 +21,13 @@ export default function Component() {
       setLoading(true);
       if (input instanceof File) {
         await updateGraph(undefined, undefined, input);
-        return;
-      }
-      const isYoutube = checkInputType(input);
-      if (isYoutube) {
-        await updateGraph(undefined, input);
       } else {
-        await updateGraph(input);
+        const isYoutube = checkInputType(input);
+        if (isYoutube) {
+          await updateGraph(undefined, input);
+        } else {
+          await updateGraph(input);
+        }
       }
       router.push("/graph");
     } catch (err) {
@@ -47,16 +47,14 @@ export default function Component() {
       {loading ? (
         <Loading />
       ) : (
-        <SubmitArea
-          value={value}
-          setValue={setValue}
-          submit={submit}
-        />
+        <>
+          <SubmitArea value={value} setValue={setValue} submit={submit} />
+          <RecommendValue handleClick={(value) => submit(value)} />
+          <div className="absolute bottom-0 mb-8">
+            <CommunityGraph />
+          </div>
+        </>
       )}
-      <RecommendValue handleClick={(value) => submit(value)} />
-      <div className="absolute bottom-0 mb-8">
-        <CommunityGraph />
-      </div>
     </section>
   );
 }

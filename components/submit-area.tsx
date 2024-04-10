@@ -30,7 +30,7 @@ const SubmitArea = ({ value, setValue, submit }: SubmitAreaProps) => {
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
     if (file) {
-      submit(file)
+      submit(file);
       return;
     }
     submit(value);
