@@ -50,7 +50,7 @@ export default function Component() {
       <h2 className="text-md md:text-xl mt-2 font-light text-primary/60">
         generate. visualize. interact.
       </h2>
-      {!loading ? (
+      {loading ? (
         <>
           <Image
             src="/loader"
