@@ -1,15 +1,22 @@
 import { Document } from "langchain/document";
-import { YoutubeLoader } from "langchain/document_loaders/web/youtube";
+import { PDFLoader } from "langchain/document_loaders/fs/pdf";
 import { RecursiveCharacterTextSplitter } from "langchain/text_splitter";
 import { ChatOpenAI } from "@langchain/openai";
 import { ChatPromptTemplate } from "@langchain/core/prompts";
 import { StringOutputParser } from "@langchain/core/output_parsers";
+import fs from 'fs';
+import os from 'os';
+import path from 'path';
 
+
+function getVideoId(videoUrl: string): string {
+    const match = videoUrl.match(/(?:(?:https?:)?\/\/)?(?:www\.)?youtu(?:be\.com\/watch\?v=|\.be\/)([\w\-]+)/);
+    return match ? match[1] : '';
+}
 const splitter = new RecursiveCharacterTextSplitter({
-  chunkSize: 500,
-  chunkOverlap: 30,
+    chunkSize: 500,
+    chunkOverlap: 30,
 });
-
 const contextString: string = `
 You are a network graph maker who extracts terms and their relations from a given context. You are provided with a context chunk (delimited by \`\`\`) Your task is to extract the ontology of terms mentioned in the given context. These terms should represent the key concepts as per the context. 
 Thought 1: While traversing through each sentence, Think about the key terms mentioned in it.
@@ -32,58 +39,95 @@ Format your output as a list of json. Each element of the list contains a pair o
    }}, {{...}}
 ]
 `;
-
 const prompt = ChatPromptTemplate.fromMessages([
-  ["system", contextString],
-  ["human", "{input}"],
+    ["system", contextString],
+    ["human", "{input}"],
 ]);
 const model = new ChatOpenAI({ temperature: 0.1 });
 const outputParser = new StringOutputParser();
 const extract_chain = prompt.pipe(model).pipe(outputParser);
 
 export async function loadFromYoutubeLink(url: string): Promise<Document[]> {
-  const loader = YoutubeLoader.createFromUrl(url, {
-    addVideoInfo: false,
-  });
+    const loader = YoutubeLoader.createFromUrl(url, {
+        addVideoInfo: false,
+    });
 
-  const documents = await loader.load();
+    const documents = await loader.load();
 
-  return documents;
+    return documents;
+}
+
+export async function loadFromPDF(file: File): Promise<Document[]> {
+    // Generate a unique temporary file path
+    const tempFilePath = path.join(os.tmpdir(), `temp-${Date.now()}.pdf`);
+
+    // Write the File object to the temporary file path
+    await new Promise<void>((resolve, reject) => {
+        const fileReader = new FileReader();
+
+        fileReader.onload = () => {
+            fs.writeFile(tempFilePath, new Uint8Array(fileReader.result as ArrayBuffer), (err) => {
+                if (err) {
+                    reject(err);
+                } else {
+                    resolve();
+                }
+            });
+        };
+
+        fileReader.onerror = () => {
+            reject(new Error('Failed to read the file.'));
+        };
+
+        fileReader.readAsArrayBuffer(file);
+    });
+
+    try {
+        // Load the PDF using the temporary file path
+        const loader = new PDFLoader(tempFilePath);
+        const docs = await loader.load();
+        return docs;
+    } catch (error) {
+        throw new Error(`Failed to load PDF: ${error.message}`);
+    } finally {
+        // Delete the temporary file
+        fs.unlinkSync(tempFilePath);
+    }
 }
 
 export async function loadFromText(text: string): Promise<Document[]> {
-  const documents = await splitter.splitText(text);
-  const docOutput = documents.map(
-    (doc) => new Document({ pageContent: doc, metadata: {} }),
-  );
-  return docOutput;
+    const documents = await splitter.splitText(text);
+    const docOutput = documents.map(
+        (doc) => new Document({ pageContent: doc, metadata: {} }),
+    );
+    return docOutput;
 }
 
 export async function splitDocuments(
-  documents: Document[],
+    documents: Document[],
 ): Promise<Document[]> {
-  const docOutput = await splitter.splitDocuments(documents);
-  return docOutput;
+    const docOutput = await splitter.splitDocuments(documents);
+    return docOutput;
 }
 
 export async function extractRelations(
-  documents: Document[],
+    documents: Document[],
 ): Promise<Map<string, any>[]> {
-  const relations = await extract_chain.batch(
-    documents.map((doc) => ({ input: doc.pageContent })),
-  );
+    const relations = await extract_chain.batch(
+        documents.map((doc) => ({ input: doc.pageContent })),
+    );
 
-  const relationsOutput = relations.map((rel_list) => {
-    // Check if the rel_list is in markdown format
-    if (rel_list.startsWith("```json") && rel_list.endsWith("```")) {
-      // Remove the markdown formatting
-      const jsonString = rel_list.slice(7, -3).trim();
-      return JSON.parse(jsonString);
-    } else {
-      // Assume the rel_list is a direct JSON string
-      return JSON.parse(rel_list);
-    }
-  });
+    const relationsOutput = relations.map((rel_list) => {
+        // Check if the rel_list is in markdown format
+        if (rel_list.startsWith("```json") && rel_list.endsWith("```")) {
+            // Remove the markdown formatting
+            const jsonString = rel_list.slice(7, -3).trim();
+            return JSON.parse(jsonString);
+        } else {
+            // Assume the rel_list is a direct JSON string
+            return JSON.parse(rel_list);
+        }
+    });
 
-  return relationsOutput;
+    return relationsOutput;
 }
