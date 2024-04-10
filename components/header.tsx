@@ -1,4 +1,4 @@
-"use client"
+"use client";
 import React from "react";
 import {
   Sheet,
@@ -10,14 +10,13 @@ import {
 } from "./ui/sheet";
 import { Menu } from "lucide-react";
 import { ModeToggle } from "./theme-toggle";
-import { useRouter } from "next/navigation";
 
 const Header = () => {
   return (
     <div className="sticky z-20 bg-neutral-950 p-2 px-4 flex flex-row justify-between top-0">
       <div className="flex items-center justify-center h-ful">
         <span
-          onClick={() => window.location.reload()}
+          onClick={() => window.location.replace("/")}
           className="text-2xl text-neutral-200 cursor-pointer font-semibold"
         >
           athena.

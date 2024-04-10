@@ -12,13 +12,13 @@ export type Node = {
   id: string;
   data: string;
   metadata?: Record<string, any>;
-}
+};
 
 export type Edge = {
   id: string;
   data: string;
-  from: string // Node id
-  to: string // Node id
-  page_content: string
-  metadata?: Record<string, any>
-}
+  from: string; // Node id
+  to: string; // Node id
+  page_content: string;
+  metadata?: Record<string, any>;
+};

@@ -5,12 +5,10 @@ import { ChatOpenAI } from "@langchain/openai";
 import { ChatPromptTemplate } from "@langchain/core/prompts";
 import { StringOutputParser } from "@langchain/core/output_parsers";
 
-
 const splitter = new RecursiveCharacterTextSplitter({
-    chunkSize: 500,
-    chunkOverlap: 30,
+  chunkSize: 500,
+  chunkOverlap: 30,
 });
-
 
 const contextString: string = `
 You are a network graph maker who extracts terms and their relations from a given context. You are provided with a context chunk (delimited by \`\`\`) Your task is to extract the ontology of terms mentioned in the given context. These terms should represent the key concepts as per the context. 
@@ -35,45 +33,50 @@ Format your output as a list of json. Each element of the list contains a pair o
 ]
 `;
 
-
 const prompt = ChatPromptTemplate.fromMessages([
-    ["system", contextString],
-    ['human', "{input}"]
+  ["system", contextString],
+  ["human", "{input}"],
 ]);
 const model = new ChatOpenAI({});
 const outputParser = new StringOutputParser();
 const extract_chain = prompt.pipe(model).pipe(outputParser);
 
-
 export async function loadFromYoutubeLink(url: string): Promise<Document[]> {
-    const loader = YoutubeLoader.createFromUrl(url, {
-        language: "en",
-        addVideoInfo: true,
-    });
+  const loader = YoutubeLoader.createFromUrl(url, {
+    language: "en",
+    addVideoInfo: true,
+  });
 
-    const documents = await loader.load();
+  const documents = await loader.load();
 
-    console.log(documents);
+  console.log(documents);
 
-    return documents;
+  return documents;
 }
-
 
 export async function loadFromText(text: string): Promise<Document[]> {
-    const documents = await splitter.splitText(text);
-    const docOutput = documents.map(doc => new Document({ pageContent: doc, metadata: {} }))
-    return docOutput;
+  const documents = await splitter.splitText(text);
+  const docOutput = documents.map(
+    (doc) => new Document({ pageContent: doc, metadata: {} }),
+  );
+  return docOutput;
 }
 
-
-export async function splitDocuments(documents: Document[]): Promise<Document[]> {
-    const docOutput = await splitter.splitDocuments(documents);
-    return docOutput;
+export async function splitDocuments(
+  documents: Document[],
+): Promise<Document[]> {
+  const docOutput = await splitter.splitDocuments(documents);
+  return docOutput;
 }
 
-
-export async function extractRelations(documents: Document[]): Promise<Map<string, any>[]> {
-    const relations = await extract_chain.batch(documents.map(doc => { input: doc.pageContent }));
-    const relationsOutput = relations.map(rel_list => JSON.parse(rel_list))
-    return relationsOutput;
+export async function extractRelations(
+  documents: Document[],
+): Promise<Map<string, any>[]> {
+  const relations = await extract_chain.batch(
+    documents.map((doc) => {
+      input: doc.pageContent;
+    }),
+  );
+  const relationsOutput = relations.map((rel_list) => JSON.parse(rel_list));
+  return relationsOutput;
 }
