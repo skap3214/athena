@@ -29,7 +29,6 @@ const SubmitArea = ({ value, setValue, submit }: SubmitAreaProps) => {
       const selectedFile = event.target.files[0];
       setValue("");
       setFile(selectedFile);
-      console.log(selectedFile);
     }
   };
 
@@ -82,10 +81,10 @@ const SubmitArea = ({ value, setValue, submit }: SubmitAreaProps) => {
       >
         <label
           className="w-full"
-          // onDragOver={handleDragOver}
-          // onDragEnter={handleDragEnter}
-          // onDragLeave={handleDragLeave}
-          // onDrop={handleDrop}
+        // onDragOver={handleDragOver}
+        // onDragEnter={handleDragEnter}
+        // onDragLeave={handleDragLeave}
+        // onDrop={handleDrop}
         >
           <Textarea
             disabled={!!file}

@@ -86,7 +86,9 @@ export async function insertEdge(
   }
 }
 
-export async function filterNewDocuments(documents: Document[]): Promise<Document[]> {
+export async function filterNewDocuments(
+  documents: Document[],
+): Promise<Document[]> {
   const batchSize = 250;
   const newDocuments: Document[] = [];
 
@@ -95,18 +97,20 @@ export async function filterNewDocuments(documents: Document[]): Promise<Documen
     const pageContents = batch.map((doc) => doc.pageContent);
 
     const { data: existingEdges, error } = await client
-      .from('edges')
-      .select('page_content')
-      .in('page_content', pageContents);
+      .from("edges")
+      .select("page_content")
+      .in("page_content", pageContents);
 
     if (error) {
       throw error;
     }
 
-    const existingPageContents = new Set(existingEdges.map((edge) => edge.page_content));
+    const existingPageContents = new Set(
+      existingEdges.map((edge) => edge.page_content),
+    );
 
     const newBatchDocuments = batch.filter(
-      (doc) => !existingPageContents.has(doc.pageContent)
+      (doc) => !existingPageContents.has(doc.pageContent),
     );
 
     newDocuments.push(...newBatchDocuments);
