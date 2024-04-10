@@ -53,24 +53,25 @@ class YoutubeGrabTool {
 
       const chunks = transcriptXML.getElementsByTagName("text");
 
-      function convertToMs(text: string) {
-        const float = parseFloat(text.split("=")[1].replace(/"/g, "")) * 1000;
-        return Math.round(float);
-      }
 
       let transcriptions = [];
       for (const chunk of chunks) {
         const [offset, duration] = chunk.rawAttrs.split(" ");
         transcriptions.push({
           text: chunk.text,
-          offset: convertToMs(offset),
-          duration: convertToMs(duration),
+          offset: this.convertToMs(offset),
+          duration: this.convertToMs(duration),
         });
       }
       return transcriptions;
     } catch (e: any) {
       throw new YoutubeTranscriptError(e);
     }
+  }
+
+  static convertToMs(text: string) {
+    const float = parseFloat(text.split("=")[1].replace(/"/g, "")) * 1000;
+    return Math.round(float);
   }
 
   static #parseTranscriptEndpoint(document: any, langCode?: string) {
