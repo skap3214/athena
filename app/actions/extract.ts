@@ -10,14 +10,14 @@ import { StringOutputParser } from "@langchain/core/output_parsers";
 import { YoutubeGrabTool } from "@/lib/youtube";
 
 function getVideoId(videoUrl: string): string {
-  const match = videoUrl.match(
-    /(?:(?:https?:)?\/\/)?(?:www\.)?youtu(?:be\.com\/watch\?v=|\.be\/)([\w\-]+)/,
-  );
-  return match ? match[1] : "";
+    const match = videoUrl.match(
+        /(?:(?:https?:)?\/\/)?(?:www\.)?youtu(?:be\.com\/watch\?v=|\.be\/)([\w\-]+)/,
+    );
+    return match ? match[1] : "";
 }
 const splitter = new RecursiveCharacterTextSplitter({
-  chunkSize: 500,
-  chunkOverlap: 30,
+    chunkSize: 500,
+    chunkOverlap: 30,
 });
 const contextString: string = `
 You are a network graph maker who extracts terms and their relations from a given context. You are provided with a context chunk (delimited by \`\`\`) Your task is to extract the ontology of terms mentioned in the given context. These terms should represent the key concepts as per the context. 
@@ -40,10 +40,10 @@ Format your output as a list of json. Each element of the list contains a pair o
        "edge": "relationship between the two concepts, node_1 and node_2 in one or two sentences"
    }}, {{...}}
 ]
-If you cannot extract any ontologies from the context, respond ONLY with 'None'`;
+YOUR RESPONSE SHOULD ALWAYS BE JSON COMPATIBLE. Do not add markdown in your response, just plain JSON.`;
 const prompt = ChatPromptTemplate.fromMessages([
-  ["system", contextString],
-  ["human", "{input}"],
+    ["system", contextString],
+    ["human", "{input}"],
 ]);
 const model = new ChatOpenAI({ temperature: 0.1 });
 const outputParser = new StringOutputParser();
@@ -60,20 +60,20 @@ const extract_chain = prompt.pipe(model).pipe(outputParser);
 // }
 
 export async function loadFromYoutubeLink(url: string): Promise<Document[]> {
-  const videoId = getVideoId(url);
-  const transcript = await YoutubeGrabTool.fetchTranscript(videoId);
-  let documents: Document[] = [];
+    const videoId = getVideoId(url);
+    const transcript = await YoutubeGrabTool.fetchTranscript(videoId);
+    let documents: Document[] = [];
 
-  for (const item of transcript) {
-    const document = new Document({
-      pageContent: item.text,
-      metadata: { start: item.duration, source: videoId },
-    });
-    documents.push(document);
-  }
+    for (const item of transcript) {
+        const document = new Document({
+            pageContent: item.text,
+            metadata: { start: item.duration, source: videoId },
+        });
+        documents.push(document);
+    }
 
-  documents = await splitter.splitDocuments(documents);
-  return documents;
+    documents = await splitter.splitDocuments(documents);
+    return documents;
 }
 
 // export async function loadFromPDF(file: File): Promise<Document[]> {
@@ -123,42 +123,42 @@ export async function loadFromYoutubeLink(url: string): Promise<Document[]> {
 // }
 
 export async function loadFromText(text: string): Promise<Document[]> {
-  const documents = await splitter.splitText(text);
-  const docOutput = documents.map(
-    (doc) => new Document({ pageContent: doc, metadata: {} }),
-  );
-  return docOutput;
+    const documents = await splitter.splitText(text);
+    const docOutput = documents.map(
+        (doc) => new Document({ pageContent: doc, metadata: {} }),
+    );
+    return docOutput;
 }
 
 export async function splitDocuments(
-  documents: Document[],
+    documents: Document[],
 ): Promise<Document[]> {
-  const docOutput = await splitter.splitDocuments(documents);
-  return docOutput;
+    const docOutput = await splitter.splitDocuments(documents);
+    return docOutput;
 }
 
 export async function extractRelations(
-  documents: Document[],
+    documents: Document[],
 ): Promise<Map<string, any>[]> {
-  const relations = await extract_chain.batch(
-    documents.map((doc) => ({ input: doc.pageContent })),
-  );
+    const relations = await extract_chain.batch(
+        documents.map((doc) => ({ input: doc.pageContent })),
+    );
 
-  const relationsOutput = relations.map((rel_list) => {
-    if (rel_list.startsWith("```json") && rel_list.endsWith("```")) {
-      // Remove the markdown formatting
-      const jsonString = rel_list.slice(7, -3).trim();
-      return JSON.parse(jsonString);
-    } else {
-      try {
-        // Assume the rel_list is a direct JSON string
-        return JSON.parse(rel_list);
-      } catch (error) {
-        // console.log("Failed JSON parsing: ", error);
-        return [];
-      }
-    }
-  });
+    const relationsOutput = relations.map((rel_list) => {
+        if (rel_list.startsWith("```json") && rel_list.endsWith("```")) {
+            // Remove the markdown formatting
+            const jsonString = rel_list.slice(7, -3).trim();
+            return JSON.parse(jsonString);
+        } else {
+            try {
+                // Assume the rel_list is a direct JSON string
+                return JSON.parse(rel_list);
+            } catch (error) {
+                // console.log("Failed JSON parsing: ", error);
+                return [];
+            }
+        }
+    });
 
-  return relationsOutput;
+    return relationsOutput;
 }
