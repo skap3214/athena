@@ -7,6 +7,8 @@ import { updateGraph } from "./actions";
 import { toast } from "sonner";
 import SubmitArea from "@/components/submit-area";
 import Loading from "@/components/loading";
+import RecommendValue from "@/components/recommend-value";
+import CommunityGraph from "@/components/community-graph";
 
 export default function Component() {
   const router = useRouter();
@@ -55,6 +57,10 @@ export default function Component() {
           setValue={setValue}
         />
       )}
+      <RecommendValue handleClick={(value) => submit(value)} />
+      <div className="absolute bottom-0 mb-8">
+        <CommunityGraph />
+      </div>
     </section>
   );
 }

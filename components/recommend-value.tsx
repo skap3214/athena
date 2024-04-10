@@ -27,7 +27,7 @@ const RecommendValue = ({ handleClick }: RecommendValueProps) => {
         <Button
           size="sm"
           key={index}
-          className="bg-neutral-700 rounded-xl shadow-md p-2 space-x-1 flex"
+          className="bg-neutral-700 rounded-md shadow-md p-2 space-x-1 flex"
           onClick={() => handleClick(recommendation.value)}
         >
           <span className="text-xs">{recommendation.label}</span>
