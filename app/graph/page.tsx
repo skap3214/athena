@@ -1,8 +1,15 @@
 "use client";
-import { useCallback, useEffect, useRef, useState } from "react";
-import { ForceGraph3D } from "react-force-graph";
+import dynamic from "next/dynamic";
+import { useRef, useState, useCallback, useEffect } from "react";
 import { getGraph } from "../actions";
 import { useTheme } from "next-themes";
+
+const ForceGraph3D = dynamic(
+  () => import("react-force-graph").then((mod) => mod.ForceGraph3D),
+  {
+    ssr: false,
+  },
+);
 
 const ForceGraphComponent = () => {
   const fgRef = useRef<any>();
@@ -10,7 +17,7 @@ const ForceGraphComponent = () => {
   const { theme } = useTheme();
 
   const handleClick = useCallback(
-    (node: { x: number; y: number; z: number }) => {
+    (node: any) => {
       const distance = 40;
       const distRatio = 1 + distance / Math.hypot(node.x, node.y, node.z);
       fgRef.current?.cameraPosition(

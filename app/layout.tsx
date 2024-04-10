@@ -4,7 +4,7 @@ import "./globals.css";
 import { Toaster } from "sonner";
 import Hero from "@/components/hero";
 import { ThemeProvider } from "next-themes";
-import { Analytics } from '@vercel/analytics/react';
+import { Analytics } from "@vercel/analytics/react";
 
 export const metadata: Metadata = {
   title: "athena",
@@ -14,8 +14,8 @@ export const metadata: Metadata = {
       {
         url: "/logo.png",
         href: "/logo.png",
-      }
-    ]
+      },
+    ],
   },
   openGraph: {
     images: "/opengraph-image.png",

@@ -81,10 +81,10 @@ const SubmitArea = ({ value, setValue, submit }: SubmitAreaProps) => {
       >
         <label
           className="w-full"
-        // onDragOver={handleDragOver}
-        // onDragEnter={handleDragEnter}
-        // onDragLeave={handleDragLeave}
-        // onDrop={handleDrop}
+          // onDragOver={handleDragOver}
+          // onDragEnter={handleDragEnter}
+          // onDragLeave={handleDragLeave}
+          // onDrop={handleDrop}
         >
           <Textarea
             disabled={!!file}

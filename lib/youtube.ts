@@ -53,7 +53,6 @@ class YoutubeGrabTool {
 
       const chunks = transcriptXML.getElementsByTagName("text");
 
-
       let transcriptions = [];
       for (const chunk of chunks) {
         const [offset, duration] = chunk.rawAttrs.split(" ");
