@@ -1,3 +1,4 @@
+"use client"
 import React from "react";
 import {
   Sheet,
@@ -12,13 +13,12 @@ import { ModeToggle } from "./theme-toggle";
 import { useRouter } from "next/navigation";
 
 const Header = () => {
-  const router = useRouter();
   return (
     <div className="sticky z-20 bg-neutral-950 p-2 px-4 flex flex-row justify-between top-0">
       <div className="flex items-center justify-center h-ful">
         <span
           onClick={() => window.location.reload()}
-          className="text-2xl cursor-pointer font-semibold"
+          className="text-2xl text-neutral-200 cursor-pointer font-semibold"
         >
           athena.
         </span>
