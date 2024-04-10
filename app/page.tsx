@@ -26,6 +26,7 @@ export default function Component() {
 
   const submit = async (input: string) => {
     if (!input) return;
+    setValue("");
     try {
       setLoading(true);
       const isYoutube = checkInputType(input);
