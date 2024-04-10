@@ -13,19 +13,19 @@ import { ModeToggle } from "./theme-toggle";
 
 const Header = () => {
   return (
-    <div className="sticky z-20 bg-neutral-950 p-2 px-4 flex flex-row justify-between top-0">
+    <div className="sticky z-20 bg-transparent p-2 px-4 flex flex-row justify-between top-0">
       <div className="flex items-center justify-center h-ful">
         <span
           onClick={() => window.location.replace("/")}
-          className="text-2xl text-neutral-200 cursor-pointer font-semibold"
+          className="text-2xl dark:text-neutral-200 text-neutral-900 cursor-pointer font-semibold"
         >
           athena.
         </span>
       </div>
       <Sheet>
         <SheetTrigger asChild>
-          <div className="border rounded-lg p-2 hover:bg-neutral-700 cursor-pointer">
-            <Menu className="cursor-pointer1 hover:scale-105 text-neutral-300" />
+          <div className="border rounded-lg p-2 hover:bg-neutral-200 dark:hover:bg-neutral-800 cursor-pointer">
+            <Menu className="cursor-pointer1 hover:scale-105 text-neutral-900 dark:text-neutral-300" />
           </div>
         </SheetTrigger>
         <SheetContent className="justify-between flex flex-col">

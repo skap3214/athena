@@ -2,10 +2,12 @@
 import { useEffect, useRef, useState } from "react";
 import { ForceGraph3D } from "react-force-graph";
 import { getGraph } from "../actions";
+import { useTheme } from "next-themes";
 
 const ForceGraphComponent = () => {
   const fgRef = useRef();
   const [graph, setGraph] = useState(null);
+  const { theme } = useTheme();
 
   useEffect(() => {
     const fetchGraph = async () => {
@@ -25,7 +27,7 @@ const ForceGraphComponent = () => {
       {graph && (
         <ForceGraph3D
           ref={fgRef}
-          backgroundColor="#0A0A0A"
+          backgroundColor={theme === "light" ? "#FFFF" : "#0A0A0A"}
           graphData={graph!}
           nodeLabel="description"
           nodeAutoColorBy="group"
