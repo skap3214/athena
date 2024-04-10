@@ -9,6 +9,17 @@ import { Analytics } from '@vercel/analytics/react';
 export const metadata: Metadata = {
   title: "athena",
   description: "generate. visualize. interact.",
+  icons: {
+    icon: [
+      {
+        url: "/logo.png",
+        href: "/logo.png",
+      }
+    ]
+  },
+  openGraph: {
+    images: "/opengraph-image.png",
+  },
 };
 
 export default function RootLayout({

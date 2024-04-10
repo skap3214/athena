@@ -39,7 +39,7 @@ export default function Component() {
 
   return (
     <section className="h-screen w-full flex mx-5 md:mx-10 lg:mx-20 2xl:mx-0 flex-col justify-center items-center">
-      <h1 className="text-3xl font-bold tracking-tighter sm:text-5xl xl:text-6xl/none">
+      <h1 className="font-bold tracking-tighter text-5xl xl:text-6xl/none">
         athena.
       </h1>
       <h2 className="text-md md:text-xl mt-2 font-light text-primary/60">
