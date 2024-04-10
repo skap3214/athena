@@ -2,7 +2,7 @@
 import { SubmitAreaProps } from "@/types";
 import { Textarea } from "./ui/textarea";
 import { checkInputType } from "@/lib/check-input-type";
-import { CaseUpper, ArrowRight } from "lucide-react";
+import { CaseUpper, ArrowRight, Paperclip } from "lucide-react";
 import { FaYoutube } from "react-icons/fa";
 import { Button } from "./ui/button";
 import { useState } from "react";
@@ -57,7 +57,10 @@ const SubmitArea = ({
         >
           <Textarea
             autoFocus
-            className={cn("flex-1", isDragOver && "bg-neutral-700")}
+            className={cn(
+              "flex-1",
+              isDragOver && "bg-neutral-700 dark:bg-neutral-400",
+            )}
             value={value}
             onChange={(e) => setValue(e.target.value)}
             placeholder={labelText}
@@ -66,11 +69,12 @@ const SubmitArea = ({
             <div className="h-full flex items-center justify-center">
               <label
                 htmlFor="file-upload"
-                className="dark:hover:bg-transparent/30 h-7 rounded-md p-2 cursor-pointer bg-primary dark:bg-neutral-300 dark:hover:bg-neutral-100 text-primary-foreground hover:bg-primary/90"
+                className="flex space-x-1.5 h-7 rounded-md p-2 cursor-pointer bg-neutral-800 dark:bg-neutral-200 dark:hover:bg-neutral-100 text-primary-foreground hover:bg-neutral-800/90"
               >
                 <span className="h-full flex items-center justify-center text-sm overflow-visible">
                   Upload
                 </span>
+                <Paperclip className="h-3 w-3" />
                 <input
                   accept="text/csv"
                   type="file"
