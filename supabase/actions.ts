@@ -29,7 +29,8 @@ export async function insertNode(
     const { data: insertedNode, error: insertError } = await client
       .from("nodes")
       .insert({ data, metadata })
-      .select().single();
+      .select()
+      .single();
 
     if (insertError) {
       throw insertError;

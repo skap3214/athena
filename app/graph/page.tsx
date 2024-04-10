@@ -4,8 +4,8 @@ import { ForceGraph3D } from "react-force-graph";
 import { getGraph } from "../actions";
 
 const ForceGraphComponent = () => {
-  const fgRef = useRef<any>();
-  const [graph, setGraph] = useState<any>(null);
+  const fgRef = useRef();
+  const [graph, setGraph] = useState(null);
 
   useEffect(() => {
     const fetchGraph = async () => {
@@ -13,7 +13,7 @@ const ForceGraphComponent = () => {
         const graphData = await getGraph();
         setGraph(graphData);
       } catch (error) {
-        console.error('Error fetching graph data:', error);
+        // console.error('Error fetching graph data:', error);
       }
     };
 
@@ -22,16 +22,14 @@ const ForceGraphComponent = () => {
 
   return (
     <div className="max-h-screen">
-      {graph ? (
+      {graph && (
         <ForceGraph3D
           ref={fgRef}
           backgroundColor="#0A0A0A"
-          graphData={graph}
+          graphData={graph!}
           nodeLabel="description"
           nodeAutoColorBy="group"
         />
-      ) : (
-        <div>Loading...</div>
       )}
     </div>
   );

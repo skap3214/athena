@@ -4,31 +4,43 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import getUser from "@/hooks/get-user";
 import { checkInputType } from "@/lib/check-input-type";
-import { ArrowRight, CaseUpper } from "lucide-react";
+import { ArrowRight, CaseUpper, Globe } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { FormEvent, useState } from "react";
 import { FaYoutube } from "react-icons/fa";
 import { updateGraph } from "./actions";
+import CommunityGraph from "@/components/community-graph";
 
 export default function Component() {
   const router = useRouter();
   const user = getUser();
   const [value, setValue] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
     submit(value);
   };
 
-  const submit = (input: string) => {
-    const isYoutube = checkInputType(value);
-    if (isYoutube) {
-      updateGraph(undefined, value);
-    } else {
-      updateGraph(value);
+  const submit = async (input: string) => {
+    if (!input) return;
+    try {
+      setLoading(true);
+      const isYoutube = checkInputType(input);
+      if (isYoutube) {
+        await updateGraph(undefined, input);
+      } else {
+        await updateGraph(input);
+      }
+      router.push("/graph");
+    } catch (err) {
+      // console.log(err)
+    } finally {
+      setLoading(false);
     }
-    router.push("/graph");
   };
+
+  if (loading) return <>loading...</>;
 
   return (
     <section className="h-screen w-full flex mx-5 md:mx-10 lg:mx-20 2xl:mx-0 flex-col justify-center items-center">
@@ -68,6 +80,9 @@ export default function Component() {
         </div>
       </form>
       <RecommendValue handleClick={(value) => submit(value)} />
+      <div className="absolute bottom-0 mb-8">
+        <CommunityGraph />
+      </div>
     </section>
   );
 }
