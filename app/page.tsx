@@ -10,6 +10,8 @@ import { FormEvent, useState } from "react";
 import { FaYoutube } from "react-icons/fa";
 import { updateGraph } from "./actions";
 import CommunityGraph from "@/components/community-graph";
+import Image from "next/image";
+import { toast } from "sonner";
 
 export default function Component() {
   const router = useRouter();
@@ -34,13 +36,10 @@ export default function Component() {
       }
       router.push("/graph");
     } catch (err) {
-      // console.log(err)
-    } finally {
+      toast.error("Internal server error");
       setLoading(false);
     }
   };
-
-  if (loading) return <>loading...</>;
 
   return (
     <section className="h-screen w-full flex mx-5 md:mx-10 lg:mx-20 2xl:mx-0 flex-col justify-center items-center">
@@ -50,39 +49,45 @@ export default function Component() {
       <h2 className="text-md md:text-xl mt-2 font-light text-primary/60">
         generate. visualize. interact.
       </h2>
-      <form
-        onSubmit={handleSubmit}
-        className="mt-6 max-w-[600px] w-full space-y-1 flex flex-col items-end"
-      >
-        <Textarea
-          autoFocus
-          className="flex-1"
-          value={value}
-          onChange={(e) => setValue(e.target.value)}
-          placeholder="Type something or paste a YouTube video link"
-        />
-        <div className="flex w-full justify-between">
-          <div>
-            {value &&
-              (checkInputType(value) ? (
-                <FaYoutube className="h-5 mt-1.5 w-5" />
-              ) : (
-                <CaseUpper className="h-5 mt-1.5 w-5" />
-              ))}
-          </div>
-          <Button
-            size="sm"
-            className="dark:hover:bg-transparent/30"
-            variant="ghost"
+      {loading ? (
+        <Image src="/loader.svg" alt="loader" height={150} width={150} />
+      ) : (
+        <>
+          <form
+            onSubmit={handleSubmit}
+            className="mt-6 max-w-[600px] w-full space-y-1 flex flex-col items-end"
           >
-            <ArrowRight className="h-5 w-5" />
-          </Button>
-        </div>
-      </form>
-      <RecommendValue handleClick={(value) => submit(value)} />
-      <div className="absolute bottom-0 mb-8">
-        <CommunityGraph />
-      </div>
+            <Textarea
+              autoFocus
+              className="flex-1"
+              value={value}
+              onChange={(e) => setValue(e.target.value)}
+              placeholder="Type something or paste a YouTube video link"
+            />
+            <div className="flex w-full justify-between">
+              <div>
+                {value &&
+                  (checkInputType(value) ? (
+                    <FaYoutube className="h-5 mt-1.5 w-5" />
+                  ) : (
+                    <CaseUpper className="h-5 mt-1.5 w-5" />
+                  ))}
+              </div>
+              <Button
+                size="sm"
+                className="dark:hover:bg-transparent/30"
+                variant="ghost"
+              >
+                <ArrowRight className="h-5 w-5" />
+              </Button>
+            </div>
+          </form>
+          <RecommendValue handleClick={(value) => submit(value)} />
+          <div className="absolute bottom-0 mb-8">
+            <CommunityGraph />
+          </div>
+        </>
+      )}
     </section>
   );
 }
