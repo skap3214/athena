@@ -8,7 +8,8 @@ import { Analytics } from "@vercel/analytics/react";
 
 export const metadata: Metadata = {
   title: "athena",
-  description: "generate. visualize. interact.",
+  description: "graph of knowledge. made by you.",
+  metadataBase: new URL("https://athena-graph.vercel.app/"),
   icons: {
     icon: [
       {
