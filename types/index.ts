@@ -34,3 +34,9 @@ export type SubmitAreaProps = {
   setValue: Dispatch<SetStateAction<string>>;
   submit: (input: string | File) => void;
 };
+
+export type ModalStore = {
+  isOpen: boolean;
+  onOpen: () => void;
+  onClose: () => void;
+};

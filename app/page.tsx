@@ -8,15 +8,24 @@ import SubmitArea from "@/components/submit-area";
 import Loading from "@/components/loading";
 import RecommendValue from "@/components/recommend-value";
 import CommunityGraph from "@/components/community-graph";
-// import { loadFromPDF } from "./actions/extract";
+import getUser from "@/hooks/get-user";
+import { useModal } from "@/hooks/use-modal-store";
+import SignInButton from "@/components/sign-in-button";
+import { cn } from "@/lib/utils";
 
 export default function Component() {
+  const user = getUser();
   const router = useRouter();
   const [value, setValue] = useState("");
   const [loading, setLoading] = useState(false);
+  const { onOpen } = useModal();
 
   const submit = async (input: string | File) => {
     if (!input) return;
+    if (!user?.id) {
+      onOpen();
+      return;
+    }
     setValue("");
     try {
       setLoading(true);
@@ -39,6 +48,9 @@ export default function Component() {
 
   return (
     <section className="h-screen w-full flex mx-5 md:mx-10 lg:mx-20 2xl:mx-0 flex-col justify-center items-center">
+      <div className={cn("absolute top-0 left-0 p-2 hidden", !user && "flex")}>
+        <SignInButton />
+      </div>
       <h1 className="font-bold tracking-tighter text-5xl xl:text-6xl/none">
         athena.
       </h1>

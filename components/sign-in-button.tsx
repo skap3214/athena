@@ -15,12 +15,9 @@ const SignInButton = () => {
     }
   };
   return (
-    <Button
-      className="space-x-2 h-10 flex flex-row items-center justify-center rounded-md bg-neutral-900 px-8 text-sm font-medium text-neutral-50 shadow transition-colors hover:bg-neutral-900/90 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-neutral-950 disabled:pointer-events-none disabled:opacity-50 dark:bg-neutral-50 dark:text-neutral-900 dark:hover:bg-neutral-50/90 dark:focus-visible:ring-neutral-300"
-      onClick={handleGoogleAuth}
-    >
-      <FaGoogle />
+    <Button className="space-x-1.5" onClick={handleGoogleAuth}>
       <span>Sign In</span>
+      <FaGoogle />
     </Button>
   );
 };

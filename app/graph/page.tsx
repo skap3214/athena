@@ -2,6 +2,7 @@
 import { useEffect, useState } from "react";
 import dynamic from "next/dynamic";
 import { getGraph } from "../actions";
+import Loading from "@/components/loading";
 
 const Graph = dynamic(() => import("../../components/graph"), {
   ssr: false,
@@ -23,7 +24,13 @@ const ForceGraphComponent = () => {
     fetchGraph();
   }, []);
 
-  if (!graph) return null;
+  if (!graph) {
+    return (
+      <div className="h-screen w-full place-content-center flex">
+        <Loading />
+      </div>
+    );
+  }
 
   return (
     <div className="max-h-screen">
