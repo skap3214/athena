@@ -23,9 +23,7 @@ const ForceGraphComponent = () => {
     fetchGraph();
   }, []);
 
-  if (!graph) {
-    return <div className="max-h-screen">Loading...</div>;
-  }
+  if (!graph) return null;
 
   return (
     <div className="max-h-screen">
