@@ -22,7 +22,6 @@ export default function Component() {
   const { onOpen } = useModal();
 
   const submit = async (input: string | File) => {
-    console.log(input)
     if (!input) return;
     if (
       !(input instanceof File) &&
