@@ -126,8 +126,8 @@ export async function getAllNodes(): Promise<Node[]> {
 
   while (true) {
     const { data: pageNodes, error } = await client
-      .from('nodes')
-      .select('*')
+      .from("nodes")
+      .select("*")
       .range(page * pageSize, (page + 1) * pageSize - 1);
 
     if (error) {
@@ -153,8 +153,8 @@ export async function getAllEdges(): Promise<Edge[]> {
 
   while (true) {
     const { data: pageEdges, error } = await client
-      .from('edges')
-      .select('*')
+      .from("edges")
+      .select("*")
       .range(page * pageSize, (page + 1) * pageSize - 1);
 
     if (error) {
