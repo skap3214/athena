@@ -87,6 +87,7 @@ const SubmitArea = ({ value, setValue, submit }: SubmitAreaProps) => {
           // onDrop={handleDrop}
         >
           <Textarea
+            minLength={100}
             disabled={!!file}
             autoFocus
             className={cn(
@@ -132,7 +133,17 @@ const SubmitArea = ({ value, setValue, submit }: SubmitAreaProps) => {
                 <Delete className="h-4 w-4 dark:text-neutral-200 text-neutral-700" />
               </span>
             </div>
-            <div className="flex space-x-1 mb-8">
+            <div className="flex mb-8">
+              <div
+                className={cn(
+                  "h-full flex items-center text-xs mr-3 justify-center",
+                  value.length >= 100 && "hidden",
+                  !value && "hidden",
+                  checkInputType(value) && "hidden",
+                )}
+              >
+                100 words minimum
+              </div>
               <div className="h-full flex items-center justify-center">
                 {file ? (
                   <FileCheck className="h-5 mt-0.5 w-5" />

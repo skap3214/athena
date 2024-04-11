@@ -17,11 +17,20 @@ export default function Component() {
   const user = getUser();
   const router = useRouter();
   const [value, setValue] = useState("");
+
   const [loading, setLoading] = useState(false);
   const { onOpen } = useModal();
 
   const submit = async (input: string | File) => {
     if (!input) return;
+    if (
+      !(input instanceof File) &&
+      !checkInputType(input) &&
+      value.length < 100
+    ) {
+      toast.warning("Input should be atleast a 100 words");
+      return;
+    }
     if (!user?.id) {
       onOpen();
       return;
