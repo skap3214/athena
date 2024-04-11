@@ -13,7 +13,7 @@ export const recommendations = [
     value: data,
   },
   {
-    label: "FTX Bankruptcy Explained!",
+    label: "FTX Bankruptcy Explained",
     value: "https://www.youtube.com/watch?v=zTFhnpf-IE0",
   },
   // {
