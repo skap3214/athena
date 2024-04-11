@@ -22,11 +22,12 @@ export default function Component() {
   const { onOpen } = useModal();
 
   const submit = async (input: string | File) => {
+    console.log(input)
     if (!input) return;
     if (
       !(input instanceof File) &&
       !checkInputType(input) &&
-      value.length < 100
+      input.length < 100
     ) {
       toast.warning("Input should be atleast a 100 words");
       return;
