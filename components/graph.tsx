@@ -1,7 +1,9 @@
 "use client";
-import { useCallback, useRef } from "react";
+import { useCallback, useEffect, useRef } from "react";
 import { ForceGraph3D } from "react-force-graph";
 import { useTheme } from "next-themes";
+import * as THREE from "three";
+import { UnrealBloomPass } from "three/examples/jsm/Addons.js";
 
 const Graph = ({ graph }: any) => {
   const fgRef = useRef<any>();
@@ -20,12 +22,17 @@ const Graph = ({ graph }: any) => {
     [fgRef],
   );
 
+  useEffect(() => {
+    const bloomPass = new UnrealBloomPass(new THREE.Vector2(window.innerWidth, window.innerHeight), 0.25, 0.4, 0);
+    fgRef.current.postProcessingComposer().addPass(bloomPass);
+  }, []);
+
   return (
     <div className="max-h-screen">
       {graph && (
         <ForceGraph3D
           ref={fgRef}
-          backgroundColor={theme === "light" ? "#FFFF" : "#0A0A0A"}
+          backgroundColor="black"
           graphData={graph!}
           nodeLabel="description"
           nodeAutoColorBy="id"
