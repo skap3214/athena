@@ -5,6 +5,7 @@ const Loading = () => {
   return (
     <>
       <Image
+        draggable={false}
         src="/loader.svg"
         alt="loader"
         className="dark:block hidden"
@@ -12,6 +13,7 @@ const Loading = () => {
         width={150}
       />
       <Image
+        draggable={false}
         src="/loader-dark.svg"
         alt="loader"
         className="dark:hidden"
