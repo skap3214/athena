@@ -29,6 +29,7 @@ const ForceGraphComponent = () => {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    setInput("");
     fetch("/api", {
       method: "POST",
       headers: {
