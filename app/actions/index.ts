@@ -58,7 +58,7 @@ export async function* updateGraphStreaming(
   text?: string,
   url?: string,
   file?: File,
-): AsyncGenerator<any, void, unknown> {
+): AsyncGenerator<{ nodes: Node[], links: Edge[] }, void, unknown> {
   // Validate input
   let inputCount = 0;
   if (text) inputCount++;
