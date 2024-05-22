@@ -46,9 +46,9 @@ const prompt = ChatPromptTemplate.fromMessages([
   ["system", contextString],
   ["human", "```{input}```"],
 ]);
-// const model = new ChatGroq({ temperature: 0.1, model: "llama3-70b-8192" });
-const model = new ChatOpenAI({ temperature: 0.1 });
-const outputParser = new StringOutputParser();
+const model = new ChatGroq({ temperature: 0.1, model: "llama3-70b-8192" });
+// const model = new ChatOpenAI({ temperature: 0.1 });
+const outputParser = new JsonOutputParser();
 const extract_chain = prompt.pipe(model).pipe(outputParser);
 
 // export async function loadFromYoutubeLink(url: string): Promise<Document[]> {
@@ -145,13 +145,24 @@ export async function extractRelations(
   documents: Document[],
 ): Promise<Map<string, any>[]> {
   console.log("Extracting...");
-  const relations = await extract_chain.batch(
-    documents.map((doc) => ({ input: doc.pageContent })),
-    { maxConcurrency: 1 }
-  );
+  // const relations = await extract_chain.batch(
+    // documents.map((doc) => ({ input: doc.pageContent })),
+    // { maxConcurrency: 1 }
+  // );
+  let relations: any = [];
+  let count = 1;
+  console.log("Extracting from: ", documents.length)
   for (const doc of documents) {
+    const pageContent = doc.pageContent;
+    const metadata = doc.metadata;
+    console.log(`extracting doc ${count}`);
+    count++;
+    const rel_list = await extract_chain.invoke({input: doc.pageContent})
+    console.log(rel_list);
+    relations.push(rel_list);
   }
   console.log(relations);
+  return relations;
   const relationsOutput = relations.map((rel_list) => {
     if (rel_list.startsWith("```json") && rel_list.endsWith("```")) {
       // Remove the markdown formatting
