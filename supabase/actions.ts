@@ -1,7 +1,7 @@
 import { Node, Edge } from "@/types";
 import { createClient } from "@supabase/supabase-js";
 import { Document } from "langchain/document";
-
+import { NODES_TABLE, EDGES_TABLE } from "@/lib/constants";
 // Create a single supabase client for interacting with your database
 const client = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -14,7 +14,7 @@ export async function insertNode(
 ): Promise<string> {
   // Check if a node with the same data already exists
   const { data: existingNode, error } = await client
-    .from("nodes") // Add missing type argument for 'from' method
+    .from(NODES_TABLE) // Add missing type argument for 'from' method
     .select("id")
     .eq("data", data)
     .single();
@@ -28,7 +28,7 @@ export async function insertNode(
   } else {
     // Insert a new node
     const { data: insertedNode, error: insertError } = await client
-      .from("nodes")
+      .from(NODES_TABLE)
       .insert({ data, metadata })
       .select()
       .single();
@@ -53,7 +53,7 @@ export async function insertEdge(
 
   // Check if an edge with the same data already exists
   const { data: existingEdge, error } = await client
-    .from("edges")
+    .from(EDGES_TABLE)
     .select("id")
     .eq("data", data)
     .single();
@@ -67,7 +67,7 @@ export async function insertEdge(
   } else {
     // Insert a new edge
     const { data: insertedEdge, error: insertError } = await client
-      .from("edges")
+      .from(EDGES_TABLE)
       .upsert({
         data,
         from: fromNodeId,
@@ -97,7 +97,7 @@ export async function filterNewDocuments(
     const pageContents = batch.map((doc) => doc.pageContent);
 
     const { data: existingEdges, error } = await client
-      .from("edges")
+      .from(EDGES_TABLE)
       .select()
       .in("page_content", pageContents);
 
@@ -126,7 +126,7 @@ export async function getAllNodes(): Promise<Node[]> {
 
   while (true) {
     const { data: pageNodes, error } = await client
-      .from("nodes")
+      .from(NODES_TABLE)
       .select("*")
       .range(page * pageSize, (page + 1) * pageSize - 1);
 
@@ -153,7 +153,7 @@ export async function getAllEdges(): Promise<Edge[]> {
 
   while (true) {
     const { data: pageEdges, error } = await client
-      .from("edges")
+      .from(EDGES_TABLE)
       .select("*")
       .range(page * pageSize, (page + 1) * pageSize - 1);
 
