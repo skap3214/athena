@@ -145,39 +145,33 @@ export async function extractRelations(
   documents: Document[],
 ): Promise<Map<string, any>[]> {
   console.log("Extracting...");
-  // const relations = await extract_chain.batch(
-    // documents.map((doc) => ({ input: doc.pageContent })),
-    // { maxConcurrency: 1 }
-  // );
-  let relations: any = [];
+  let relations: Map<string, any>[] = [];
   let count = 1;
   console.log("Extracting from: ", documents.length)
   for (const doc of documents) {
-    const pageContent = doc.pageContent;
-    const metadata = doc.metadata;
     console.log(`extracting doc ${count}`);
     count++;
-    const rel_list = await extract_chain.invoke({input: doc.pageContent})
+    const rel_list: any = await extract_chain.invoke({input: doc.pageContent})
     console.log(rel_list);
     relations.push(rel_list);
   }
   console.log(relations);
   return relations;
-  const relationsOutput = relations.map((rel_list) => {
-    if (rel_list.startsWith("```json") && rel_list.endsWith("```")) {
-      // Remove the markdown formatting
-      const jsonString = rel_list.slice(7, -3).trim();
-      return JSON.parse(jsonString);
-    } else {
-      try {
-        // Assume the rel_list is a direct JSON string
-        return JSON.parse(rel_list);
-      } catch (error) {
-        // console.log("Failed JSON parsing: ", error);
-        return [];
-      }
-    }
-  });
+}
 
-  return relationsOutput;
+export async function* extractRelationsStreaming(
+  documents: Document[],
+): AsyncGenerator<any, void, unknown> {
+  console.log("Extracting...");
+  let count = 1;
+  console.log("Extracting from: ", documents.length);
+  for (const doc of documents) {
+    console.log(`extracting doc ${count}`);
+    count++;
+    const rel_list: any = await extract_chain.stream({ input: doc.pageContent });
+    yield {
+      relations: rel_list,
+      document: doc
+    };
+  }
 }
