@@ -7,7 +7,7 @@ export async function* updateGraphStreaming(
     text?: string,
     url?: string,
     file?: File,
-  ): AsyncGenerator<{ nodes: Node[], links: Edge[] }, void, unknown> {
+  ): AsyncGenerator<{ nodes: Map<string, any>[], links: Map<string, any>[] }, void, unknown> {
     // Validate input
     let inputCount = 0;
     if (text) inputCount++;
@@ -44,29 +44,28 @@ export async function* updateGraphStreaming(
     for await (const output of extractRelationsStreaming(documents)) {
       const rel_list = output.relations;
       const doc = output.document;
-      let nodes: Node[] = [];
-      let edges: Edge[] = [];
+      let nodes: any[] = [];
+      let edges: any[] = [];
       for (const relation of rel_list) {
         const node_1_data = relation.node_1;
         const edge_data = relation.edge;
         const node_2_data = relation.node_2;
   
-        const node_1: Node = {
+        const node_1 = {
           id: generateUUID(node_1_data),
-          data: node_1_data,
+          description: node_1_data,
         };
   
-        const node_2: Node = {
+        const node_2 = {
           id: generateUUID(node_2_data),
-          data: node_2_data,
+          description: node_2_data,
         };
   
-        const edge: Edge = {
+        const edge = {
           id: generateUUID(edge_data),
-          data: edge_data,
-          from: node_1.id,
-          to: node_2.id,
-          page_content: doc.pageContent,
+          content: edge_data,
+          source: node_1.id,
+          target: node_2.id,
         };
         nodes.push(node_1);
         nodes.push(node_2);

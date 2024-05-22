@@ -247,7 +247,7 @@ const empty_data = {
   links: []
 }
 const ForceGraphComponent = () => {
-  const [graph, setGraph] = useState(data);
+  const [graph, setGraph] = useState(empty_data);
 
   if (!graph) {
     return (
