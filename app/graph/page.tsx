@@ -254,8 +254,28 @@ const ForceGraphComponent = () => {
     );
   }
 
+  const addDummyData = () => {
+    const newNodes = [
+      { id: "dummy-node-1", description: "dummy node 1" },
+      { id: "dummy-node-2", description: "dummy node 2" },
+    ];
+
+    const newLinks = [
+      { source: "dummy-node-1", target: "dummy-node-2", content: "dummy link 1" },
+      { source: "dummy-node-1", target: "284b8891-74b9-4d21-8184-6bad76e31dbf", content: "dummy link 2" },
+    ];
+
+    setGraph((prevGraph) => ({
+      nodes: [...prevGraph.nodes, ...newNodes],
+      links: [...prevGraph.links, ...newLinks],
+    }));
+  };
+
   return (
     <div className="max-h-screen">
+      <div className="z-[99999] absolute bottom-0 right-0">
+        <button onClick={addDummyData} className="bg-blue-500 z-[30] cursor-pointer text-center w-full text-white p-2 rounded">Add Dummy Data</button>
+      </div>
       <Graph graph={graph} />
     </div>
   );
