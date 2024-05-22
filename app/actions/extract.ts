@@ -168,7 +168,7 @@ export async function* extractRelationsStreaming(
   for (const doc of documents) {
     console.log(`extracting doc ${count}`);
     count++;
-    const rel_list: any = await extract_chain.stream({ input: doc.pageContent });
+    const rel_list: any = await extract_chain.invoke({ input: doc.pageContent });
     yield {
       relations: rel_list,
       document: doc

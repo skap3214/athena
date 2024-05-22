@@ -1,7 +1,6 @@
 "use client";
 import { useEffect, useState } from "react";
 import dynamic from "next/dynamic";
-import { getGraph } from "../actions";
 import Loading from "@/components/loading";
 
 const Graph = dynamic(() => import("../../components/graph"), {
@@ -243,6 +242,10 @@ const data = {
   ],
 };
 
+const empty_data = {
+  nodes: [],
+  links: []
+}
 const ForceGraphComponent = () => {
   const [graph, setGraph] = useState(data);
 
@@ -254,21 +257,43 @@ const ForceGraphComponent = () => {
     );
   }
 
-  const addDummyData = () => {
-    const newNodes = [
-      { id: "dummy-node-1", description: "dummy node 1" },
-      { id: "dummy-node-2", description: "dummy node 2" },
-    ];
-
-    const newLinks = [
-      { source: "dummy-node-1", target: "dummy-node-2", content: "dummy link 1" },
-      { source: "dummy-node-1", target: "284b8891-74b9-4d21-8184-6bad76e31dbf", content: "dummy link 2" },
-    ];
-
-    setGraph((prevGraph) => ({
-      nodes: [...prevGraph.nodes, ...newNodes],
-      links: [...prevGraph.links, ...newLinks],
-    }));
+  const addDummyData = async () => {
+    const dummy_text = "The biggest lesson that can be read from 70 years of AI research is that general methods that leverage computation are ultimately the most effective, and by a large margin. The ultimate reason for this is Moore's law, or rather its generalization of continued exponentially falling cost per unit of computation. Most AI research has been conducted as if the computation available to the agent were constant (in which case leveraging human knowledge would be one of the only ways to improve performance) but, over a slightly longer time than a typical research project, massively more computation inevitably becomes available. Seeking an improvement that makes a difference in the shorter term, researchers seek to leverage their human knowledge of the domain, but the only thing that matters in the long run is the leveraging of computation. These two need not run counter to each other, but in practice they tend to. Time spent on one is time not spent on the other. There are psychological commitments to investment in one approach or the other. And the human-knowledge approach tends to complicate methods in ways that make them less suited to taking advantage of general methods leveraging computation.  There were many examples of AI researchers' belated learning of this bitter lesson, and it is instructive to review some of the most prominent.";
+    fetch('/api', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        text: dummy_text
+        // or
+        // url: "https://example.com"
+        // or
+        // file: someFileObject
+      })
+    })
+    .then(response => response.body)
+    .then(body => {
+      const reader = body.getReader();
+      const decoder = new TextDecoder();
+      
+      reader.read().then(function processText({ done, value }) {
+        if (done) {
+          console.log('Stream complete');
+          return;
+        }
+    
+        const graphData = JSON.parse(decoder.decode(value));
+        console.log(graphData);
+        
+        setGraph((prevGraph) => ({
+          nodes: [...prevGraph.nodes, ...graphData.nodes],
+          links: [...prevGraph.links, ...graphData.links],
+        }));
+      
+        reader.read().then(processText);
+      });
+    });
   };
 
   return (
