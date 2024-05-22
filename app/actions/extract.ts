@@ -4,7 +4,7 @@ import { RecursiveCharacterTextSplitter } from "langchain/text_splitter";
 import { ChatOpenAI } from "@langchain/openai";
 import { ChatGroq } from "@langchain/groq";
 import { ChatPromptTemplate } from "@langchain/core/prompts";
-import { StringOutputParser } from "@langchain/core/output_parsers";
+import { StringOutputParser, JsonOutputParser } from "@langchain/core/output_parsers";
 // import fs from 'fs';
 // import os from 'os';
 // import path from 'path';
@@ -44,9 +44,10 @@ Format your output as a list of json. Each element of the list contains a pair o
 YOUR RESPONSE SHOULD ALWAYS BE JSON COMPATIBLE. Do not add markdown in your response, just plain JSON.`;
 const prompt = ChatPromptTemplate.fromMessages([
   ["system", contextString],
-  ["human", "{input}"],
+  ["human", "```{input}```"],
 ]);
-const model = new ChatGroq({ temperature: 0.1, model: "llama3-70b-8192" });
+// const model = new ChatGroq({ temperature: 0.1, model: "llama3-70b-8192" });
+const model = new ChatOpenAI({ temperature: 0.1 });
 const outputParser = new StringOutputParser();
 const extract_chain = prompt.pipe(model).pipe(outputParser);
 
@@ -143,10 +144,14 @@ export async function splitDocuments(
 export async function extractRelations(
   documents: Document[],
 ): Promise<Map<string, any>[]> {
+  console.log("Extracting...");
   const relations = await extract_chain.batch(
     documents.map((doc) => ({ input: doc.pageContent })),
+    { maxConcurrency: 1 }
   );
-
+  for (const doc of documents) {
+  }
+  console.log(relations);
   const relationsOutput = relations.map((rel_list) => {
     if (rel_list.startsWith("```json") && rel_list.endsWith("```")) {
       // Remove the markdown formatting
