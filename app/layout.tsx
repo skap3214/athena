@@ -31,7 +31,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={`${GeistSans.className} selection:bg-purple-700 selection:text-white`}>
+      <body
+        className={`${GeistSans.className} selection:bg-purple-700 selection:text-white`}
+      >
         <ThemeProvider attribute="class" storageKey="theme">
           <Analytics />
           <Hero>{children}</Hero>

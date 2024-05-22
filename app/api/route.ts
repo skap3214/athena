@@ -18,13 +18,15 @@ export async function POST(request: NextRequest) {
         } catch (error) {
           controller.error(error);
         }
-      }
+      },
     });
 
     return new NextResponse(stream, {
-      headers: { "Content-Type": "application/json" }
+      headers: { "Content-Type": "application/json" },
     });
   } catch (error) {
-    return new NextResponse(JSON.stringify({ error: error.message }), { status: 400 });
+    return new NextResponse(JSON.stringify({ error: error.message }), {
+      status: 400,
+    });
   }
 }

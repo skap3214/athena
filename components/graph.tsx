@@ -23,7 +23,12 @@ const Graph = ({ graph }: any) => {
   );
 
   useEffect(() => {
-    const bloomPass = new UnrealBloomPass(new THREE.Vector2(window.innerWidth, window.innerHeight), 0.25, 0.4, 0);
+    const bloomPass = new UnrealBloomPass(
+      new THREE.Vector2(window.innerWidth, window.innerHeight),
+      0.25,
+      0.4,
+      0,
+    );
     fgRef.current.postProcessingComposer().addPass(bloomPass);
   }, []);
 

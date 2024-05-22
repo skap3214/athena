@@ -1,6 +1,11 @@
 "use server";
 import { Document } from "langchain/document";
-import { extractRelations, loadFromText, loadFromYoutubeLink, extractRelationsStreaming } from "./extract";
+import {
+  extractRelations,
+  loadFromText,
+  loadFromYoutubeLink,
+  extractRelationsStreaming,
+} from "./extract";
 import { insertRelations } from "./insert";
 import {
   filterNewDocuments,

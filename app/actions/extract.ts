@@ -4,7 +4,10 @@ import { RecursiveCharacterTextSplitter } from "langchain/text_splitter";
 import { ChatOpenAI } from "@langchain/openai";
 import { ChatGroq } from "@langchain/groq";
 import { ChatPromptTemplate } from "@langchain/core/prompts";
-import { StringOutputParser, JsonOutputParser } from "@langchain/core/output_parsers";
+import {
+  StringOutputParser,
+  JsonOutputParser,
+} from "@langchain/core/output_parsers";
 // import fs from 'fs';
 // import os from 'os';
 // import path from 'path';
@@ -147,11 +150,13 @@ export async function extractRelations(
   console.log("Extracting...");
   let relations: Map<string, any>[] = [];
   let count = 1;
-  console.log("Extracting from: ", documents.length)
+  console.log("Extracting from: ", documents.length);
   for (const doc of documents) {
     console.log(`extracting doc ${count}`);
     count++;
-    const rel_list: any = await extract_chain.invoke({input: doc.pageContent})
+    const rel_list: any = await extract_chain.invoke({
+      input: doc.pageContent,
+    });
     console.log(rel_list);
     relations.push(rel_list);
   }
@@ -168,10 +173,12 @@ export async function* extractRelationsStreaming(
   for (const doc of documents) {
     console.log(`extracting doc ${count}`);
     count++;
-    const rel_list: any = await extract_chain.invoke({ input: doc.pageContent });
+    const rel_list: any = await extract_chain.invoke({
+      input: doc.pageContent,
+    });
     yield {
       relations: rel_list,
-      document: doc
+      document: doc,
     };
   }
 }
