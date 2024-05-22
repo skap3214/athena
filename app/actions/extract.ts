@@ -2,6 +2,7 @@ import { Document } from "langchain/document";
 // import { PDFLoader } from "langchain/document_loaders/fs/pdf";
 import { RecursiveCharacterTextSplitter } from "langchain/text_splitter";
 import { ChatOpenAI } from "@langchain/openai";
+import { ChatGroq } from "@langchain/groq";
 import { ChatPromptTemplate } from "@langchain/core/prompts";
 import { StringOutputParser } from "@langchain/core/output_parsers";
 // import fs from 'fs';
@@ -22,8 +23,8 @@ const splitter = new RecursiveCharacterTextSplitter({
 const contextString: string = `
 You are a network graph maker who extracts terms and their relations from a given context. You are provided with a context chunk (delimited by \`\`\`) Your task is to extract the ontology of terms mentioned in the given context. These terms should represent the key concepts as per the context. 
 Thought 1: While traversing through each sentence, Think about the key terms mentioned in it.
-    Terms may include object, entity, location, organization, person, 
-    condition, acronym, documents, service, concept, etc.
+    Terms should include object, entity, location, organization, person, 
+    condition, acronym, documents, service, concept or similar
     Terms should be as atomistic and singular as possible.
 
 Thought 2: Think about how these terms can have one on one relation with other terms.
@@ -45,7 +46,7 @@ const prompt = ChatPromptTemplate.fromMessages([
   ["system", contextString],
   ["human", "{input}"],
 ]);
-const model = new ChatOpenAI({ temperature: 0.1 });
+const model = new ChatGroq({ temperature: 0.1, model: "llama3-70b-8192" });
 const outputParser = new StringOutputParser();
 const extract_chain = prompt.pipe(model).pipe(outputParser);
 
