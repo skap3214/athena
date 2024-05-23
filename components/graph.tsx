@@ -1,13 +1,11 @@
 "use client";
 import { useCallback, useEffect, useRef } from "react";
 import { ForceGraph3D } from "react-force-graph";
-import { useTheme } from "next-themes";
 import * as THREE from "three";
 import { UnrealBloomPass } from "three/examples/jsm/Addons.js";
 
 const Graph = ({ graph }: any) => {
   const fgRef = useRef<any>();
-  const { theme } = useTheme();
 
   const handleClick = useCallback(
     (node: { x: number; y: number; z: number }) => {
@@ -29,7 +27,7 @@ const Graph = ({ graph }: any) => {
       0.4,
       0,
     );
-    fgRef.current.postProcessingComposer().addPass(bloomPass);
+    fgRef?.current?.postProcessingComposer().addPass(bloomPass);
   }, []);
 
   return (

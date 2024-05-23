@@ -6,6 +6,7 @@ import Hero from "@/components/hero";
 import { ThemeProvider } from "next-themes";
 import { Analytics } from "@vercel/analytics/react";
 import { ModalProvider } from "@/providers/modal-provider";
+import Header from "@/components/header";
 
 export const metadata: Metadata = {
   title: "athena",
@@ -34,9 +35,10 @@ export default function RootLayout({
       <body
         className={`${GeistSans.className} selection:bg-purple-700 selection:text-white`}
       >
-        <ThemeProvider attribute="class" storageKey="theme">
+        <ThemeProvider attribute="class" defaultTheme="dark" storageKey="theme">
           <Analytics />
-          <Hero>{children}</Hero>
+          <Header />
+          {children}
           <Toaster />
           <ModalProvider />
         </ThemeProvider>

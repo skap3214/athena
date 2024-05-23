@@ -1,82 +1,73 @@
 "use client";
-import { checkInputType } from "@/lib/check-input-type";
-import { useRouter } from "next/navigation";
-import { useState } from "react";
-import { updateGraph } from "./actions";
-import { toast } from "sonner";
-import SubmitArea from "@/components/submit-area";
+import { useEffect, useState } from "react";
+import dynamic from "next/dynamic";
 import Loading from "@/components/loading";
-import RecommendValue from "@/components/recommend-value";
-import CommunityGraph from "@/components/community-graph";
-import getUser from "@/hooks/get-user";
-import { useModal } from "@/hooks/use-modal-store";
-import SignInButton from "@/components/sign-in-button";
-import { cn } from "@/lib/utils";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { ArrowUp } from "lucide-react";
 
-export default function Component() {
-  const user = getUser();
-  const router = useRouter();
-  const [value, setValue] = useState("");
+const Graph = dynamic(() => import("../components/graph"), {
+  ssr: false,
+});
 
-  const [loading, setLoading] = useState(false);
-  const { onOpen } = useModal();
+const ForceGraphComponent = () => {
+  const [input, setInput] = useState("");
+  const [graph, setGraph] = useState<any>({ nodes: [], links: [] });
 
-  const submit = async (input: string | File) => {
-    if (!input) return;
-    // if (
-    //   !(input instanceof File) &&
-    //   !checkInputType(input) &&
-    //   input.length < 100
-    // ) {
-    //   toast.warning("Input should be atleast a 100 words");
-    //   return;
-    // }
-    if (!user?.id) {
-      onOpen();
-      return;
-    }
-    setValue("");
-    try {
-      setLoading(true);
-      if (input instanceof File) {
-        await updateGraph(undefined, undefined, input);
-      } else {
-        const isYoutube = checkInputType(input);
-        if (isYoutube) {
-          await updateGraph(undefined, input);
-        } else {
-          await updateGraph(input);
-        }
-      }
-      router.push("/graph");
-    } catch (err) {
-      toast.error("Internal server error");
-      setLoading(false);
-    }
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setInput("");
+    fetch("/api", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        text: input,
+      }),
+    })
+      .then((response) => response.body)
+      .then((body) => {
+        const reader = body?.getReader();
+        const decoder = new TextDecoder();
+
+        reader?.read().then(function processText({ done, value }) {
+          if (done) {
+            return;
+          }
+
+          const graphData = JSON.parse(decoder.decode(value));
+
+          setGraph((prevGraph: any) => ({
+            nodes: [...prevGraph.nodes, ...graphData.nodes],
+            links: [...prevGraph.links, ...graphData.links],
+          }));
+
+          reader.read().then(processText);
+        });
+      });
   };
 
   return (
-    <section className="h-screen w-full flex mx-5 md:mx-10 lg:mx-20 2xl:mx-0 flex-col justify-center items-center">
-      <div className={cn("absolute top-0 left-0 p-2 hidden", !user && "flex")}>
-        <SignInButton />
-      </div>
-      <h1 className="font-bold tracking-tighter text-5xl xl:text-6xl/none">
-        athena.
-      </h1>
-      <h2 className="text-md md:text-xl mt-2 font-light text-primary/60">
-        graph of knowledge. made by you.
-      </h2>
-      {loading ? (
-        <Loading />
+    <div className="max-h-screen">
+      {graph.nodes.length > 0 ? (
+        <Graph graph={graph} />
       ) : (
-        <>
-          <SubmitArea value={value} setValue={setValue} submit={submit} />
-          <RecommendValue handleClick={(value) => submit(value)} />
-          <div className="absolute bottom-0 mb-8">
-            <CommunityGraph />
-          </div>
-        </>
+        <div className="h-screen text-3xl items-center w-full place-content-center flex">
+          Input something!
+        </div>
       )}
-    </section>
+      <form
+        className="flex md:w-[30%] w-full px-4 flex-row space-x-1 absolute bottom-3 left-0 z-[9999]"
+        onSubmit={handleSubmit}
+      >
+        <Input value={input} onChange={(e) => setInput(e.target.value)} />
+        <Button type="submit">
+          <ArrowUp size="icon" />
+        </Button>
+      </form>
+    </div>
   );
-}
+};
+
+export default ForceGraphComponent;
