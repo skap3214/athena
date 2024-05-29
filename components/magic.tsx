@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useRef } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { ArrowUp } from "lucide-react";
@@ -6,6 +6,7 @@ import { MagicProps, Message as MessageType } from "@/types";
 import Microphone from "./microphone";
 import { cn } from "@/lib/utils";
 import Message from "./message";
+import useScroll from "@/hooks/use-scroll";
 
 const Magic = ({
   handleSubmit,
@@ -17,6 +18,8 @@ const Magic = ({
 }: MagicProps) => {
   const placeholder =
     mode === "default" ? "Add documents" : "Chat with your graph";
+  const messageContainerRef = useRef(null);
+  useScroll(messageContainerRef, history);
 
   return (
     <div
@@ -26,7 +29,10 @@ const Magic = ({
       )}
     >
       {mode === "chat" && (
-        <div className="h-full mb-2 rounded-md space-y-2 overflow-y-auto">
+        <div
+          ref={messageContainerRef}
+          className="h-full mb-2 rounded-md space-y-2 overflow-y-auto"
+        >
           {history.map((message: MessageType, index: number) => (
             <Message key={index} role={message.role}>
               {message.text}
