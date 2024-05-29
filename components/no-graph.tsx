@@ -17,7 +17,6 @@ export default function NoGraph({ onSubmit }: NoGraphProps) {
   const user = getUser();
   const [value, setValue] = useState("");
 
-  const [loading, setLoading] = useState(false);
   const { onOpen } = useModal();
 
   const submit = async (input: string | File) => {
@@ -34,7 +33,6 @@ export default function NoGraph({ onSubmit }: NoGraphProps) {
       onOpen();
       return;
     }
-    setLoading(true);
     setValue("");
     try {
       if (!(input instanceof File)) {
@@ -42,9 +40,7 @@ export default function NoGraph({ onSubmit }: NoGraphProps) {
       }
     } catch (err) {
       toast.error("Internal server error");
-      setLoading(false);
     }
-    setLoading(false);
   };
 
   return (
@@ -62,17 +58,11 @@ export default function NoGraph({ onSubmit }: NoGraphProps) {
       <h2 className="text-md md:text-xl mt-2 font-light text-primary/60">
         graph of knowledge. made by you.
       </h2>
-      {loading ? (
-        <Loading />
-      ) : (
-        <>
-          <SubmitArea value={value} setValue={setValue} submit={submit} />
-          <RecommendValue handleClick={(value) => submit(value)} />
-          <div className="absolute bottom-0 mb-8">
-            {/* <CommunityGraph /> */}
-          </div>
-        </>
-      )}
+      <>
+        <SubmitArea value={value} setValue={setValue} submit={submit} />
+        <RecommendValue handleClick={(value) => submit(value)} />
+        <div className="absolute bottom-0 mb-8">{/* <CommunityGraph /> */}</div>
+      </>
     </section>
   );
 }
