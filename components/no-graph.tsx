@@ -11,6 +11,7 @@ import { useModal } from "@/hooks/use-modal-store";
 import SignInButton from "@/components/sign-in-button";
 import { cn } from "@/lib/utils";
 import { NoGraphProps } from "@/types";
+import { GeistSans } from "geist/font/sans";
 
 export default function NoGraph({ onSubmit }: NoGraphProps) {
   const user = getUser();
@@ -47,7 +48,7 @@ export default function NoGraph({ onSubmit }: NoGraphProps) {
   };
 
   return (
-    <section className="h-screen w-full flex flex-col justify-center items-center">
+    <section className={`${GeistSans.className} h-screen w-full flex flex-col justify-center items-center`}>
       <div
         className={cn("absolute bottom-0 right-0 p-2 hidden", !user && "flex")}
       >
