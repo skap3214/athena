@@ -3,8 +3,14 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { ArrowUp } from "lucide-react";
 import { MagicProps } from "@/types";
+import Microphone from "./microphone";
 
-const Magic = ({ handleSubmit, input, setInput }: MagicProps) => {
+const Magic = ({
+  handleSubmit,
+  input,
+  setInput,
+  onTranscription,
+}: MagicProps) => {
   const [mode, setMode] = useState("default");
 
   useEffect(() => {
@@ -29,6 +35,7 @@ const Magic = ({ handleSubmit, input, setInput }: MagicProps) => {
       className="flex md:w-[30%] w-full px-4 flex-row space-x-1 absolute bottom-3 left-0 z-[9999]"
       onSubmit={handleSubmit}
     >
+      <Microphone onTranscription={onTranscription} />
       <Input
         value={input}
         onChange={(e) => setInput(e.target.value)}

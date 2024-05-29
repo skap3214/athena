@@ -58,6 +58,7 @@ const ForceGraphComponent = () => {
             input={input}
             setInput={setInput}
             handleSubmit={handleSubmit}
+            onTranscription={submit}
           />
         </>
       ) : (

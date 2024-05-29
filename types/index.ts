@@ -49,6 +49,7 @@ export type MagicProps = {
   handleSubmit: FormEventHandler<HTMLFormElement>;
   input: string;
   setInput: Dispatch<string>;
+  onTranscription: (transcription: string) => void;
 };
 
 export type NodeProps = {
@@ -57,4 +58,8 @@ export type NodeProps = {
   z: number;
   description: string;
   document: { pageContent: string };
+};
+
+export type MicrophoneProps = {
+  onTranscription: (transcription: string) => void;
 };
