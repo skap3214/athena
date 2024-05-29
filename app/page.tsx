@@ -57,8 +57,6 @@ const ForceGraphComponent = () => {
       });
   };
 
-  console.log(graph);
-
   return (
     <div className="max-h-screen">
       {graph.nodes.length > 0 ? (

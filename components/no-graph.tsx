@@ -49,7 +49,7 @@ export default function NoGraph({ onSubmit }: NoGraphProps) {
 
   return (
     <section
-      className={`${GeistSans.className} h-screen w-full flex flex-col justify-center items-center`}
+      className={`${GeistSans.className} px-4 h-screen w-full flex flex-col justify-center items-center`}
     >
       <div
         className={cn("absolute bottom-0 right-0 p-2 hidden", !user && "flex")}
