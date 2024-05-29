@@ -1,7 +1,6 @@
 "use client";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { ForceGraph3D } from "react-force-graph";
-import { GeistMono } from "geist/font/mono";
 import * as THREE from "three";
 import { UnrealBloomPass } from "three/examples/jsm/Addons.js";
 import { NodeProps } from "@/types";
@@ -37,7 +36,7 @@ const Graph = ({ graph }: any) => {
   }, []);
 
   return (
-    <div className={`${GeistMono.className} max-h-screen`}>
+    <div className="max-h-screen">
       {doc && (
         <div className="absolute max-w-[40%] w-fit text-right items-end flex flex-col space-y-1 z-20 m-2 p-2 text-white top-0 right-0">
           <div className="text-3xl flex-row h-full items-center flex space-x-2 font-semibold mb-2 uppercase">

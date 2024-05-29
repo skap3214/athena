@@ -19,7 +19,7 @@ const ForceGraphComponent = () => {
   };
 
   const submit = async (inputText: string) => {
-    fetch("/api", {
+    fetch("/api/add", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

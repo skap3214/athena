@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { updateGraphStreaming } from "../actions/streaming";
+import { updateGraphStreaming } from "../../actions/streaming";
 
 export async function POST(request: NextRequest) {
   const body = await request.json();
