@@ -1,4 +1,4 @@
-import { Dispatch, SetStateAction } from "react";
+import { Dispatch, FormEventHandler, SetStateAction } from "react";
 
 export type FileUploaderProps = {
   focus: boolean;
@@ -19,8 +19,8 @@ export type Node = {
 export type Edge = {
   id: string;
   data: string;
-  from: string; // Node id
-  to: string; // Node id
+  from: string;
+  to: string;
   page_content: string;
   metadata?: Record<string, any>;
 };
@@ -43,4 +43,10 @@ export type ModalStore = {
 
 export type NoGraphProps = {
   onSubmit: (input: string) => void;
+};
+
+export type MagicProps = {
+  handleSubmit: FormEventHandler<HTMLFormElement>;
+  input: string;
+  setInput: Dispatch<string>;
 };

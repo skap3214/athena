@@ -1,11 +1,8 @@
 "use client";
 import { useState } from "react";
 import dynamic from "next/dynamic";
-import Loading from "@/components/loading";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { ArrowUp } from "lucide-react";
 import NoGraph from "@/components/no-graph";
+import Magic from "@/components/magic";
 
 const Graph = dynamic(() => import("../components/graph"), {
   ssr: false,
@@ -57,15 +54,11 @@ const ForceGraphComponent = () => {
       {graph.nodes.length > 0 ? (
         <>
           <Graph graph={graph} />
-          <form
-            className="flex md:w-[30%] w-full px-4 flex-row space-x-1 absolute bottom-3 left-0 z-[9999]"
-            onSubmit={handleSubmit}
-          >
-            <Input value={input} onChange={(e) => setInput(e.target.value)} />
-            <Button type="submit">
-              <ArrowUp size="icon" />
-            </Button>
-          </form>
+          <Magic
+            input={input}
+            setInput={setInput}
+            handleSubmit={handleSubmit}
+          />
         </>
       ) : (
         <NoGraph onSubmit={submit} />

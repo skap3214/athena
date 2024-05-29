@@ -35,8 +35,7 @@ const Header = () => {
           <div className="flex flex-col justify-center items-center h-full py-4">
             <div className="text-neutral-500">Coming soon!</div>
           </div>
-          <SheetFooter className="flex justify-between flex-row-reverse">
-          </SheetFooter>
+          <SheetFooter className="flex justify-between flex-row-reverse"></SheetFooter>
         </SheetContent>
       </Sheet>
     </div>
