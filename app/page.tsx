@@ -23,6 +23,7 @@ const ForceGraphComponent = () => {
   };
 
   const submit = async (inputText: string) => {
+    if (!inputText) return;
     fetch("/api/add", {
       method: "POST",
       headers: {
