@@ -1,15 +1,5 @@
 "use client";
 import React from "react";
-import {
-  Sheet,
-  SheetContent,
-  SheetFooter,
-  SheetHeader,
-  SheetTitle,
-  SheetTrigger,
-} from "./ui/sheet";
-import { Menu } from "lucide-react";
-import { ModeToggle } from "./theme-toggle";
 
 const Header = () => {
   return (
@@ -22,7 +12,7 @@ const Header = () => {
           athena.
         </span>
       </div>
-      <Sheet>
+      {/* <Sheet>
         <SheetTrigger asChild>
           <div className="border rounded-lg p-2 cursor-pointer">
             <Menu className="cursor-pointer1 hover:scale-105" />
@@ -37,7 +27,7 @@ const Header = () => {
           </div>
           <SheetFooter className="flex justify-between flex-row-reverse"></SheetFooter>
         </SheetContent>
-      </Sheet>
+      </Sheet> */}
     </div>
   );
 };
