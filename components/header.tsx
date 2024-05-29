@@ -36,7 +36,6 @@ const Header = () => {
             <div className="text-neutral-500">Coming soon!</div>
           </div>
           <SheetFooter className="flex justify-between flex-row-reverse">
-            <ModeToggle />
           </SheetFooter>
         </SheetContent>
       </Sheet>

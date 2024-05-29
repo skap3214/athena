@@ -40,3 +40,7 @@ export type ModalStore = {
   onOpen: () => void;
   onClose: () => void;
 };
+
+export type NoGraphProps = {
+  onSubmit: (input: string) => void;
+};
