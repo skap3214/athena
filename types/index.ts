@@ -56,6 +56,11 @@ export type MagicProps = {
   history: any;
 };
 
+export type Message = {
+  role: "ai" | "human";
+  text: string;
+};
+
 export type NodeProps = {
   x: number;
   y: number;

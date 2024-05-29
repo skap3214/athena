@@ -2,9 +2,10 @@ import React from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { ArrowUp } from "lucide-react";
-import { MagicProps } from "@/types";
+import { MagicProps, Message as MessageType } from "@/types";
 import Microphone from "./microphone";
 import { cn } from "@/lib/utils";
+import Message from "./message";
 
 const Magic = ({
   handleSubmit,
@@ -14,7 +15,8 @@ const Magic = ({
   mode,
   history,
 }: MagicProps) => {
-  const placeholder = mode === "default" ? "Add documents" : "Chat";
+  const placeholder =
+    mode === "default" ? "Add documents" : "Chat with your graph";
 
   return (
     <div
@@ -24,9 +26,11 @@ const Magic = ({
       )}
     >
       {mode === "chat" && (
-        <div className="h-full mb-2 overflow-y-auto">
-          {history.map((message: string, index: number) => (
-            <div key={index}>{message}</div>
+        <div className="h-full mb-2 rounded-md space-y-2 overflow-y-auto">
+          {history.map((message: MessageType, index: number) => (
+            <Message key={index} role={message.role}>
+              {message.text}
+            </Message>
           ))}
         </div>
       )}

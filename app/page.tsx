@@ -4,7 +4,7 @@ import dynamic from "next/dynamic";
 import NoGraph from "@/components/no-graph";
 import Magic from "@/components/magic";
 import { filteredGraph } from "@/lib/filter-graph";
-import { ModeProps } from "@/types";
+import { ModeProps, Message } from "@/types";
 
 const Graph = dynamic(() => import("../components/graph"), {
   ssr: false,
@@ -16,7 +16,7 @@ const ForceGraphComponent = () => {
     nodes: [],
     links: [],
   });
-  const [history, setHistory] = useState<any>([]);
+  const [history, setHistory] = useState<Message[]>([]);
   const [mode, setMode] = useState<ModeProps>("default");
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -28,7 +28,16 @@ const ForceGraphComponent = () => {
   const submit = async (inputText: string) => {
     if (!inputText) return;
     if (mode === "chat") {
-      setHistory((prevHistory: any) => [...prevHistory, inputText]);
+      setHistory((prevHistory) => [
+        ...prevHistory,
+        { role: "human", text: inputText },
+      ]);
+      setTimeout(() => {
+        setHistory((prevHistory) => [
+          ...prevHistory,
+          { role: "ai", text: "AI response to: " + inputText },
+        ]);
+      }, 1000);
       return;
     }
     fetch("/api/add", {
