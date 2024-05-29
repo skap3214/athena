@@ -66,7 +66,7 @@ export default function NoGraph({ onSubmit }: NoGraphProps) {
           <SubmitArea value={value} setValue={setValue} submit={submit} />
           <RecommendValue handleClick={(value) => submit(value)} />
           <div className="absolute bottom-0 mb-8">
-            <CommunityGraph />
+            {/* <CommunityGraph /> */}
           </div>
         </>
       )}
