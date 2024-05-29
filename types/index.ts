@@ -50,3 +50,11 @@ export type MagicProps = {
   input: string;
   setInput: Dispatch<string>;
 };
+
+export type NodeProps = {
+  x: number;
+  y: number;
+  z: number;
+  description: string;
+  document: { pageContent: string };
+};

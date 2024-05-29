@@ -62,11 +62,13 @@ export async function* updateGraphStreaming(
       const node_1 = {
         id: generateUUID(node_1_data),
         description: node_1_data,
+        document: doc,
       };
 
       const node_2 = {
         id: generateUUID(node_2_data),
         description: node_2_data,
+        document: doc,
       };
 
       const edge = {
