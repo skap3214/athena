@@ -45,11 +45,15 @@ export type NoGraphProps = {
   onSubmit: (input: string) => void;
 };
 
+export type ModeProps = "chat" | "default";
+
 export type MagicProps = {
   handleSubmit: FormEventHandler<HTMLFormElement>;
   input: string;
   setInput: Dispatch<string>;
   onTranscription: (transcription: string) => void;
+  mode: ModeProps;
+  history: any;
 };
 
 export type NodeProps = {

@@ -1,9 +1,10 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import dynamic from "next/dynamic";
 import NoGraph from "@/components/no-graph";
 import Magic from "@/components/magic";
 import { filteredGraph } from "@/lib/filter-graph";
+import { ModeProps } from "@/types";
 
 const Graph = dynamic(() => import("../components/graph"), {
   ssr: false,
@@ -15,6 +16,8 @@ const ForceGraphComponent = () => {
     nodes: [],
     links: [],
   });
+  const [history, setHistory] = useState<any>([]);
+  const [mode, setMode] = useState<ModeProps>("default");
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -24,6 +27,10 @@ const ForceGraphComponent = () => {
 
   const submit = async (inputText: string) => {
     if (!inputText) return;
+    if (mode === "chat") {
+      setHistory((prevHistory: any) => [...prevHistory, inputText]);
+      return;
+    }
     fetch("/api/add", {
       method: "POST",
       headers: {
@@ -57,6 +64,21 @@ const ForceGraphComponent = () => {
       });
   };
 
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "k" && (event.metaKey || event.ctrlKey)) {
+        event.preventDefault();
+        setMode((prevMode) => (prevMode === "default" ? "chat" : "default"));
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, []);
+
   return (
     <div className="max-h-screen">
       {graph.nodes.length > 0 ? (
@@ -67,6 +89,8 @@ const ForceGraphComponent = () => {
             setInput={setInput}
             handleSubmit={handleSubmit}
             onTranscription={submit}
+            mode={mode}
+            history={history}
           />
         </>
       ) : (

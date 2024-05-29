@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { ArrowUp } from "lucide-react";
@@ -11,33 +11,25 @@ const Magic = ({
   input,
   setInput,
   onTranscription,
+  mode,
+  history,
 }: MagicProps) => {
-  const [mode, setMode] = useState("default");
-
-  useEffect(() => {
-    const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.key === "k" && (event.metaKey || event.ctrlKey)) {
-        event.preventDefault();
-        setMode((prevMode) => (prevMode === "default" ? "chat" : "default"));
-      }
-    };
-
-    window.addEventListener("keydown", handleKeyDown);
-
-    return () => {
-      window.removeEventListener("keydown", handleKeyDown);
-    };
-  }, []);
-
   const placeholder = mode === "default" ? "Add documents" : "Chat";
 
   return (
     <div
       className={cn(
-        "w-full p-4 ml-2 mb-2 rounded md:w-[30%] overflow-y-auto flex absolute bottom-0 left-0 z-[9999]",
+        "w-full p-4 ml-2 mb-2 rounded md:w-[30%] flex-col flex absolute bottom-0 left-0 z-[9999]",
         mode === "chat" && "md:h-[50vh] h-[20vh]",
       )}
     >
+      {mode === "chat" && (
+        <div className="h-full mb-2 overflow-y-auto">
+          {history.map((message: string, index: number) => (
+            <div key={index}>{message}</div>
+          ))}
+        </div>
+      )}
       <form
         className="flex items-end flex-row w-full space-x-1"
         onSubmit={handleSubmit}
