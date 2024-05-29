@@ -3,6 +3,7 @@ import { useState } from "react";
 import dynamic from "next/dynamic";
 import NoGraph from "@/components/no-graph";
 import Magic from "@/components/magic";
+import { filteredGraph } from "@/lib/filter-graph";
 
 const Graph = dynamic(() => import("../components/graph"), {
   ssr: false,
@@ -10,7 +11,10 @@ const Graph = dynamic(() => import("../components/graph"), {
 
 const ForceGraphComponent = () => {
   const [input, setInput] = useState("");
-  const [graph, setGraph] = useState<any>({ nodes: [], links: [] });
+  const [graph, setGraph] = useState<{ nodes: any[]; links: any[] }>({
+    nodes: [],
+    links: [],
+  });
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -39,15 +43,20 @@ const ForceGraphComponent = () => {
           }
 
           const graphData = JSON.parse(decoder.decode(value));
-          setGraph((prevGraph: any) => ({
-            nodes: [...prevGraph.nodes, ...graphData.nodes],
-            links: [...prevGraph.links, ...graphData.links],
-          }));
+          setGraph((prevGraph) => {
+            const newGraph = {
+              nodes: [...prevGraph.nodes, ...graphData.nodes],
+              links: [...prevGraph.links, ...graphData.links],
+            };
+            return filteredGraph(newGraph);
+          });
 
           reader.read().then(processText);
         });
       });
   };
+
+  console.log(graph);
 
   return (
     <div className="max-h-screen">

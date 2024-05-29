@@ -4,7 +4,9 @@ import { GeistSans } from "geist/font/sans";
 
 const Header = () => {
   return (
-    <div className={`${GeistSans.className} absolute z-20 w-full bg-transparent p-2 px-4 flex flex-row justify-between top-0`}>
+    <div
+      className={`${GeistSans.className} absolute z-20 w-full bg-transparent p-2 px-4 flex flex-row justify-between top-0`}
+    >
       <div className="flex items-center justify-center h-ful">
         <span
           onClick={() => window.location.replace("/")}
