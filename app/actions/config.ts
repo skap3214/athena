@@ -74,7 +74,7 @@ If you don't know the answer, just say you don't know.\
 
 export const ragPrompt = ChatPromptTemplate.fromMessages([
   ["system", ragSystemPrompt],
-  ["human", "```{input}```"],
+  ["human", "{input}"],
 ]);
 
 export const ragOutputParser = new StringOutputParser();

@@ -1,62 +1,23 @@
-import { GraphNode, GraphEdge } from "@/types";
+import { GraphNode, GraphEdge, GraphData } from "@/types";
 import {
   extractRelationsStreaming,
   loadFromText,
   loadFromYoutubeLink,
 } from "./extract";
 import { Document } from "langchain/document";
+import { formatDocumentsAsString } from "langchain/util/document";
 import generateUUID, { generateUniqueUUID } from "@/lib/id";
-import { Vectorstore, resetVectorstore } from "./config";
+import { Vectorstore, ragChain, resetVectorstore } from "./config";
+import { prepareDocuments } from "@/lib/graph";
 
-async function prepareDocuments(
-  nodes: GraphNode[],
-  links: GraphEdge[],
-  documents: Document[],
-) {
-  let nodeDocuments: Document[] = [];
-  let linkDocuments: Document[] = [];
-  let rawDocuments: Document[] = [];
 
-  for (const node of nodes) {
-    nodeDocuments.push(
-      new Document({
-        pageContent: node.description,
-        metadata: { id: node.id, docType: "node" },
-      }),
-    );
-  }
-
-  for (const link of links) {
-    linkDocuments.push(
-      new Document({
-        pageContent: link.content,
-        metadata: { id: link.id, docType: "edge" },
-      }),
-    );
-  }
-
-  for (const doc of documents) {
-    rawDocuments.push(
-      new Document({
-        pageContent: doc.pageContent,
-        metadata: { id: generateUUID(doc.pageContent), docType: "raw" },
-      }),
-    );
-  }
-
-  return {
-    nodeDocuments: nodeDocuments,
-    linkDocuments: linkDocuments,
-    rawDocuments: rawDocuments,
-  };
-}
 
 export async function* updateGraphStreaming(
   text?: string,
   url?: string,
   file?: File,
   init: boolean = false,
-): AsyncGenerator<{ nodes: GraphNode[]; links: GraphEdge[] }, void, unknown> {
+): AsyncGenerator<GraphData, void, unknown> {
   // Validate input
   let inputCount = 0;
   if (text) inputCount++;
@@ -144,7 +105,7 @@ export async function* updateGraphStreaming(
     yield graphData;
   }
 
-  const prepDocs = await prepareDocuments(
+  const prepDocs = prepareDocuments(
     Array.from(allNodes.values()),
     allLinks,
     allDocuments,
@@ -156,8 +117,41 @@ export async function* updateGraphStreaming(
   ];
   if (init) {
     let Vectorstore = resetVectorstore();
+    console.log("New vectorstore created.");
     Vectorstore.addDocuments(allDocs);
+    console.log(`Added ${allDocs.length} to vectorstore`);
   } else {
     Vectorstore.addDocuments(allDocs);
+    console.log(`Added ${allDocs.length} to vectorstore`);
   }
 }
+
+export async function* chatStreaming(
+  question: string,
+  type: 'raw' | 'node' | 'edge' = 'node'
+): AsyncGenerator<any, void, unknown> {
+
+  // Create retriever
+  const retriever = Vectorstore.asRetriever({
+    k: 5,
+    filter: (document) => document.metadata.docType == type
+  });
+
+  const documents = await retriever.invoke(question);
+  const context = formatDocumentsAsString(documents);
+
+  const input = {
+    'context': context,
+    'input': question
+  };
+  const stream = await ragChain.stream(input);
+
+  for await (const chunk of stream) {
+    const out = {
+      token: chunk,
+      source: documents
+    }
+
+    yield out
+  }
+};

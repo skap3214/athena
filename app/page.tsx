@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import dynamic from "next/dynamic";
 import NoGraph from "@/components/no-graph";
 import Magic from "@/components/magic";
-import { filteredGraph } from "@/lib/filter-graph";
+import { filteredGraph } from "@/lib/graph";
 import { ModeProps, Message } from "@/types";
 import Loading from "@/components/loading";
 
@@ -35,10 +35,33 @@ const ForceGraphComponent = () => {
         { role: "human", text: inputText },
       ]);
       setTimeout(() => {
-        setHistory((prevHistory) => [
-          ...prevHistory,
-          { role: "ai", text: "AI response to: " + inputText },
-        ]);
+        fetch("/api/chat", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            question: inputText,
+            type: 'node'
+          }),
+        })
+        .then((response) => response.body)
+        .then((body) => {
+          const reader = body?.getReader();
+          const decoder = new TextDecoder();
+          reader?.read().then(function chatStream({ done, value }) {
+            if (done) {
+              return;
+            }
+            const data = JSON.parse(decoder.decode(value));
+            console.log(data);
+            setHistory((prevHistory) => [
+              ...prevHistory,
+              { role: "ai", text: "" + data.token },
+            ]);
+          })
+
+        })
       }, 1000);
       return;
     }
