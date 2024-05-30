@@ -5,12 +5,14 @@ import NoGraph from "@/components/no-graph";
 import Magic from "@/components/magic";
 import { filteredGraph } from "@/lib/filter-graph";
 import { ModeProps, Message } from "@/types";
+import Loading from "@/components/loading";
 
 const Graph = dynamic(() => import("../components/graph"), {
   ssr: false,
 });
 
 const ForceGraphComponent = () => {
+  const [loading, setLoading] = useState(false);
   const [input, setInput] = useState("");
   const [graph, setGraph] = useState<{ nodes: any[]; links: any[] }>({
     nodes: [],
@@ -88,6 +90,14 @@ const ForceGraphComponent = () => {
     };
   }, []);
 
+  if (loading && graph.nodes.length === 0) {
+    return (
+      <div className="h-screen items-center w-full flex border justify-center">
+        <Loading />
+      </div>
+    );
+  }
+
   return (
     <div className="max-h-screen">
       {graph.nodes.length > 0 ? (
@@ -103,7 +113,7 @@ const ForceGraphComponent = () => {
           />
         </>
       ) : (
-        <NoGraph onSubmit={submit} />
+        <NoGraph onSubmit={submit} loading={loading} setLoading={setLoading} />
       )}
     </div>
   );

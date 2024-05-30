@@ -43,6 +43,8 @@ export type ModalStore = {
 
 export type NoGraphProps = {
   onSubmit: (input: string) => void;
+  loading: boolean;
+  setLoading: Dispatch<boolean>;
 };
 
 export type ModeProps = "chat" | "default";

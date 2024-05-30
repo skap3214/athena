@@ -14,7 +14,11 @@ import { NoGraphProps } from "@/types";
 import { GeistSans } from "geist/font/sans";
 import Hero from "./hero";
 
-export default function NoGraph({ onSubmit }: NoGraphProps) {
+export default function NoGraph({
+  onSubmit,
+  loading,
+  setLoading,
+}: NoGraphProps) {
   const user = getUser();
   const [value, setValue] = useState("");
 
@@ -37,6 +41,7 @@ export default function NoGraph({ onSubmit }: NoGraphProps) {
     setValue("");
     try {
       if (!(input instanceof File)) {
+        setLoading(true);
         await onSubmit(input);
       }
     } catch (err) {
@@ -50,7 +55,10 @@ export default function NoGraph({ onSubmit }: NoGraphProps) {
         className={`${GeistSans.className} px-4 h-screen w-full flex flex-col justify-center items-center`}
       >
         <div
-          className={cn("absolute bottom-0 right-0 p-2 hidden", !user && "flex")}
+          className={cn(
+            "absolute bottom-0 right-0 p-2 hidden",
+            !user && "flex",
+          )}
         >
           <SignInButton />
         </div>
@@ -63,7 +71,9 @@ export default function NoGraph({ onSubmit }: NoGraphProps) {
         <>
           <SubmitArea value={value} setValue={setValue} submit={submit} />
           <RecommendValue handleClick={(value) => submit(value)} />
-          <div className="absolute bottom-0 mb-8">{/* <CommunityGraph /> */}</div>
+          <div className="absolute bottom-0 mb-8">
+            {/* <CommunityGraph /> */}
+          </div>
         </>
       </section>
     </Hero>
