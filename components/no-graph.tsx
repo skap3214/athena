@@ -12,6 +12,7 @@ import SignInButton from "@/components/sign-in-button";
 import { cn } from "@/lib/utils";
 import { NoGraphProps } from "@/types";
 import { GeistSans } from "geist/font/sans";
+import Hero from "./hero";
 
 export default function NoGraph({ onSubmit }: NoGraphProps) {
   const user = getUser();
@@ -44,25 +45,27 @@ export default function NoGraph({ onSubmit }: NoGraphProps) {
   };
 
   return (
-    <section
-      className={`${GeistSans.className} px-4 h-screen w-full flex flex-col justify-center items-center`}
-    >
-      <div
-        className={cn("absolute bottom-0 right-0 p-2 hidden", !user && "flex")}
+    <Hero>
+      <section
+        className={`${GeistSans.className} px-4 h-screen w-full flex flex-col justify-center items-center`}
       >
-        <SignInButton />
-      </div>
-      <h1 className="font-bold tracking-tighter text-5xl xl:text-6xl/none">
-        athena.
-      </h1>
-      <h2 className="text-md md:text-xl mt-2 font-light text-primary/60">
-        graph of knowledge. made by you.
-      </h2>
-      <>
-        <SubmitArea value={value} setValue={setValue} submit={submit} />
-        <RecommendValue handleClick={(value) => submit(value)} />
-        <div className="absolute bottom-0 mb-8">{/* <CommunityGraph /> */}</div>
-      </>
-    </section>
+        <div
+          className={cn("absolute bottom-0 right-0 p-2 hidden", !user && "flex")}
+        >
+          <SignInButton />
+        </div>
+        <h1 className="font-bold tracking-tighter text-5xl xl:text-6xl/none">
+          athena.
+        </h1>
+        <h2 className="text-md md:text-xl mt-2 font-light text-primary/60">
+          graph of knowledge. made by you.
+        </h2>
+        <>
+          <SubmitArea value={value} setValue={setValue} submit={submit} />
+          <RecommendValue handleClick={(value) => submit(value)} />
+          <div className="absolute bottom-0 mb-8">{/* <CommunityGraph /> */}</div>
+        </>
+      </section>
+    </Hero>
   );
 }
