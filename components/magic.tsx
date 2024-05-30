@@ -31,7 +31,7 @@ const Magic = ({
       {mode === "chat" && (
         <div
           ref={messageContainerRef}
-          className="h-full mb-2 rounded-md space-y-2 overflow-y-auto"
+          className="h-full mb-2 rounded-md space-y-2.5 overflow-y-auto"
         >
           {history.map((message: MessageType, index: number) => (
             <Message key={index} role={message.role}>

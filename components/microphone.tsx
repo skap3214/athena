@@ -51,7 +51,7 @@ const Microphone: React.FC<MicrophoneProps> = ({ onTranscription }) => {
   return (
     <div
       className={cn(
-        "p-2 cursor-pointer rounded-md",
+        "p-2 cursor-pointer border-neutral-800 border rounded-md",
         recording && "bg-neutral-700",
       )}
       onClick={toggleRecording}

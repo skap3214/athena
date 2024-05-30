@@ -10,7 +10,7 @@ const Message = ({
   return (
     <>
       {role === "human" ? (
-        <div className="w-full text-right p-2 rounded-md justify-end items-end">
+        <div className="max-w-[70%] w-fit p-2 border border-neutral-400 rounded-md ml-auto text-right">
           {children}
         </div>
       ) : (
