@@ -1,71 +1,16 @@
 import { Document } from "langchain/document";
-// import { PDFLoader } from "langchain/document_loaders/fs/pdf";
-import { RecursiveCharacterTextSplitter } from "langchain/text_splitter";
-import { ChatOpenAI } from "@langchain/openai";
-import { ChatGroq } from "@langchain/groq";
-import { ChatPromptTemplate } from "@langchain/core/prompts";
-import {
-  StringOutputParser,
-  JsonOutputParser,
-} from "@langchain/core/output_parsers";
-// import fs from 'fs';
-// import os from 'os';
-// import path from 'path';
 import { YoutubeGrabTool } from "@/lib/youtube";
+import { Vectorstore, extractChain } from "./config";
+import { RecursiveCharacterTextSplitter } from "langchain/text_splitter";
+import { GraphData, GraphEdge, GraphNode } from "@/types";
 
-function getVideoId(videoUrl: string): string {
-  const match = videoUrl.match(
-    /(?:(?:https?:)?\/\/)?(?:www\.)?youtu(?:be\.com\/watch\?v=|\.be\/)([\w\-]+)/,
-  );
-  return match ? match[1] : "";
-}
 const splitter = new RecursiveCharacterTextSplitter({
   chunkSize: 500,
-  chunkOverlap: 30,
-});
-const contextString: string = `
-You are a network graph maker who extracts terms and their relations from a given context. You are provided with a context chunk (delimited by \`\`\`) Your task is to extract the ontology of terms mentioned in the given context. These terms should represent the key concepts as per the context. 
-Thought 1: While traversing through each sentence, Think about the key terms mentioned in it.
-    Terms should include object, entity, location, organization, person, 
-    condition, acronym, documents, service, concept or similar
-    Terms should be as atomistic and singular as possible.
-
-Thought 2: Think about how these terms can have one on one relation with other terms.
-    Terms that are mentioned in the same sentence or the same paragraph are typically related to each other.
-    Terms can be related to many other terms
-
-Thought 3: Find out the relation between each such related pair of terms. 
-
-Format your output as a list of json. Each element of the list contains a pair of terms and the relation between them, like the following: 
-[
-   {{
-       "node_1": "A concept from extracted ontology",
-       "node_2": "A related concept from extracted ontology",
-       "edge": "relationship between the two concepts, node_1 and node_2 in one or two sentences"
-   }}, {{...}}
-]
-YOUR RESPONSE SHOULD ALWAYS BE JSON COMPATIBLE. Do not add markdown in your response, just plain JSON.`;
-const prompt = ChatPromptTemplate.fromMessages([
-  ["system", contextString],
-  ["human", "```{input}```"],
-]);
-const model = new ChatGroq({ temperature: 0.1, model: "llama3-70b-8192" });
-// const model = new ChatOpenAI({ temperature: 0.1 });
-const outputParser = new JsonOutputParser();
-const extract_chain = prompt.pipe(model).pipe(outputParser);
-
-// export async function loadFromYoutubeLink(url: string): Promise<Document[]> {
-//     const loader = YoutubeLoader.createFromUrl(url, {
-//         addVideoInfo: false,
-//     });
-
-//     const documents = await loader.load();
-
-//     return documents;
-// }
+  chunkOverlap: 30
+})
 
 export async function loadFromYoutubeLink(url: string): Promise<Document[]> {
-  const videoId = getVideoId(url);
+  const videoId = YoutubeGrabTool.retrieveVideoId(url);
   const transcript = await YoutubeGrabTool.fetchTranscript(videoId);
   let documents: Document[] = [];
 
@@ -154,7 +99,7 @@ export async function extractRelations(
   for (const doc of documents) {
     console.log(`extracting doc ${count}`);
     count++;
-    const rel_list: any = await extract_chain.invoke({
+    const rel_list: any = await extractChain.invoke({
       input: doc.pageContent,
     });
     console.log(rel_list);
@@ -167,13 +112,12 @@ export async function extractRelations(
 export async function* extractRelationsStreaming(
   documents: Document[],
 ): AsyncGenerator<any, void, unknown> {
-  console.log("Extracting...");
   let count = 1;
-  console.log("Extracting from: ", documents.length);
+  console.log("Documents: ", documents.length);
   for (const doc of documents) {
-    console.log(`extracting doc ${count}`);
+    console.log(`Extract doc no.${count}`);
     count++;
-    const rel_list: any = await extract_chain.invoke({
+    const rel_list: any = await extractChain.invoke({
       input: doc.pageContent,
     });
     yield {

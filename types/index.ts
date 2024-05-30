@@ -1,3 +1,4 @@
+import { Document } from "langchain/document";
 import { Dispatch, FormEventHandler, SetStateAction } from "react";
 
 export type FileUploaderProps = {
@@ -24,6 +25,24 @@ export type Edge = {
   page_content: string;
   metadata?: Record<string, any>;
 };
+
+export type GraphNode = {
+  id: string;
+  description: string;
+  document: Document;
+}
+
+export type GraphEdge = {
+  id: string;
+  content: string;
+  source: string;
+  target: string;
+}
+
+export type GraphData = {
+  nodes: GraphNode[];
+  links: GraphEdge[];
+}
 
 export type RecommendValueProps = {
   handleClick: (value: string) => void;

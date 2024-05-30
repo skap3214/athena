@@ -5,3 +5,7 @@ export default function generateUUID(input: string): string {
   const uuid = uuidv5(input, namespace);
   return uuid;
 }
+
+export function generateUniqueUUID(): string {
+  return crypto.getRandomValues(new Uint8Array(16)).reduce((hex, byte) => hex + byte.toString(16).padStart(2, '0'), '');
+}
