@@ -1,17 +1,9 @@
 "use server";
 import { Document } from "langchain/document";
-import {
-  extractRelations,
-  loadFromText,
-  loadFromYoutubeLink,
-} from "./extract";
+import { extractRelations, loadFromText, loadFromYoutubeLink } from "./extract";
 import { insertRelations } from "./insert";
-import {
-  getAllEdges,
-  getAllNodes,
-} from "@/supabase/actions";
+import { getAllEdges, getAllNodes } from "@/supabase/actions";
 import { Node, Edge } from "@/types";
-
 
 export async function getGraph(): Promise<any> {
   const edges = await getAllEdges();

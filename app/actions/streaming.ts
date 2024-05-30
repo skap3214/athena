@@ -8,28 +8,47 @@ import { Document } from "langchain/document";
 import generateUUID, { generateUniqueUUID } from "@/lib/id";
 import { Vectorstore, resetVectorstore } from "./config";
 
-async function prepareDocuments(nodes: GraphNode[], links: GraphEdge[], documents: Document[]) {
+async function prepareDocuments(
+  nodes: GraphNode[],
+  links: GraphEdge[],
+  documents: Document[],
+) {
   let nodeDocuments: Document[] = [];
   let linkDocuments: Document[] = [];
   let rawDocuments: Document[] = [];
 
   for (const node of nodes) {
-    nodeDocuments.push(new Document( { pageContent: node.description, metadata: {id: node.id, docType: 'node'}} ))
+    nodeDocuments.push(
+      new Document({
+        pageContent: node.description,
+        metadata: { id: node.id, docType: "node" },
+      }),
+    );
   }
 
   for (const link of links) {
-    linkDocuments.push(new Document( { pageContent: link.content, metadata: {id: link.id, docType: 'edge'} } ))
+    linkDocuments.push(
+      new Document({
+        pageContent: link.content,
+        metadata: { id: link.id, docType: "edge" },
+      }),
+    );
   }
 
   for (const doc of documents) {
-    rawDocuments.push(new Document( { pageContent: doc.pageContent, metadata: {id: generateUUID(doc.pageContent), docType: 'raw'} } ))
+    rawDocuments.push(
+      new Document({
+        pageContent: doc.pageContent,
+        metadata: { id: generateUUID(doc.pageContent), docType: "raw" },
+      }),
+    );
   }
 
   return {
-    'nodeDocuments': nodeDocuments,
-    'linkDocuments': linkDocuments,
-    'rawDocuments': rawDocuments
-  }
+    nodeDocuments: nodeDocuments,
+    linkDocuments: linkDocuments,
+    rawDocuments: rawDocuments,
+  };
 }
 
 export async function* updateGraphStreaming(
@@ -37,11 +56,7 @@ export async function* updateGraphStreaming(
   url?: string,
   file?: File,
   init: boolean = false,
-): AsyncGenerator<
-  { nodes: GraphNode[]; links: GraphEdge[] },
-  void,
-  unknown
-> {
+): AsyncGenerator<{ nodes: GraphNode[]; links: GraphEdge[] }, void, unknown> {
   // Validate input
   let inputCount = 0;
   if (text) inputCount++;
@@ -129,8 +144,16 @@ export async function* updateGraphStreaming(
     yield graphData;
   }
 
-  const prepDocs = await prepareDocuments(Array.from(allNodes.values()), allLinks, allDocuments);
-  const allDocs = [...prepDocs.linkDocuments, ...prepDocs.nodeDocuments, ...prepDocs.rawDocuments];
+  const prepDocs = await prepareDocuments(
+    Array.from(allNodes.values()),
+    allLinks,
+    allDocuments,
+  );
+  const allDocs = [
+    ...prepDocs.linkDocuments,
+    ...prepDocs.nodeDocuments,
+    ...prepDocs.rawDocuments,
+  ];
   if (init) {
     let Vectorstore = resetVectorstore();
     Vectorstore.addDocuments(allDocs);

@@ -30,19 +30,19 @@ export type GraphNode = {
   id: string;
   description: string;
   document: Document;
-}
+};
 
 export type GraphEdge = {
   id: string;
   content: string;
   source: string;
   target: string;
-}
+};
 
 export type GraphData = {
   nodes: GraphNode[];
   links: GraphEdge[];
-}
+};
 
 export type RecommendValueProps = {
   handleClick: (value: string) => void;

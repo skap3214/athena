@@ -1,19 +1,27 @@
 import { ChatGroq } from "@langchain/groq";
 import { MemoryVectorStore } from "langchain/vectorstores/memory";
 import {
-    JsonOutputParser,
-    StringOutputParser
-  } from "@langchain/core/output_parsers";
+  JsonOutputParser,
+  StringOutputParser,
+} from "@langchain/core/output_parsers";
 import { ChatPromptTemplate } from "@langchain/core/prompts";
 import { OpenAIEmbeddings } from "@langchain/openai";
 
 // Models
-export const ExtractLLM = new ChatGroq({ temperature: 0.1, model: "llama3-70b-8192" });
-export const ChatLLM = new ChatGroq({ temperature: 0.1, model: "llama3-70b-8192" });
-export const Embeddings = new OpenAIEmbeddings( {modelName: "text-embedding-3-large"} );
+export const ExtractLLM = new ChatGroq({
+  temperature: 0.1,
+  model: "llama3-70b-8192",
+});
+export const ChatLLM = new ChatGroq({
+  temperature: 0.1,
+  model: "llama3-70b-8192",
+});
+export const Embeddings = new OpenAIEmbeddings({
+  modelName: "text-embedding-3-large",
+});
 
 // Vectorstore
-export let Vectorstore = new MemoryVectorStore(Embeddings)
+export let Vectorstore = new MemoryVectorStore(Embeddings);
 
 export function resetVectorstore() {
   Vectorstore = new MemoryVectorStore(Embeddings);
@@ -51,7 +59,9 @@ const extractPrompt = ChatPromptTemplate.fromMessages([
 
 const extractOutputParser = new JsonOutputParser();
 
-export const extractChain = extractPrompt.pipe(ExtractLLM).pipe(extractOutputParser);
+export const extractChain = extractPrompt
+  .pipe(ExtractLLM)
+  .pipe(extractOutputParser);
 
 // RAG chat chain
 const ragSystemPrompt: string = `\

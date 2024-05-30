@@ -6,8 +6,8 @@ import { GraphData, GraphEdge, GraphNode } from "@/types";
 
 const splitter = new RecursiveCharacterTextSplitter({
   chunkSize: 500,
-  chunkOverlap: 30
-})
+  chunkOverlap: 30,
+});
 
 export async function loadFromYoutubeLink(url: string): Promise<Document[]> {
   const videoId = YoutubeGrabTool.retrieveVideoId(url);
