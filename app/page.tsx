@@ -12,6 +12,7 @@ const Graph = dynamic(() => import("../components/graph"), {
 });
 
 const ForceGraphComponent = () => {
+  const [source, setSource] = useState<any>([]);
   const [loading, setLoading] = useState(false);
   const [input, setInput] = useState("");
   const [graph, setGraph] = useState<{ nodes: any[]; links: any[] }>({
@@ -66,6 +67,7 @@ const ForceGraphComponent = () => {
               try {
                 const data = JSON.parse(line);
                 accumulatedText += data.token;
+                if (source !== data.source) setSource(data.source);
 
                 setHistory((prevHistory) => {
                   const newHistory = [...prevHistory];
@@ -149,7 +151,7 @@ const ForceGraphComponent = () => {
     <div className="max-h-screen">
       {graph.nodes.length > 0 ? (
         <>
-          <Graph graph={graph} />
+          <Graph graph={graph} source={source} />
           <Magic
             input={input}
             setInput={setInput}

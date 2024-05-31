@@ -7,9 +7,13 @@ import { NodeProps } from "@/types";
 import { X } from "lucide-react";
 import { Button } from "./ui/button";
 
-const Graph = ({ graph }: any) => {
+const Graph = ({ graph, source }: any) => {
   const [doc, setDoc] = useState<NodeProps | null>(null);
   const fgRef = useRef<any>();
+
+  useEffect(() => {
+    console.log(source);
+  }, [source]);
 
   const handleClick = useCallback(
     (node: NodeProps) => {
