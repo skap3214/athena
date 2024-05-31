@@ -12,8 +12,17 @@ const Graph = ({ graph, source }: any) => {
   const fgRef = useRef<any>();
 
   useEffect(() => {
-    console.log(source);
+    if (source.length === 0) return;
+    mapNodes(source[0]);
   }, [source]);
+
+  function mapNodes(source: NodeProps) {
+    for (const data of graph.nodes) {
+      if (data.id === source?.metadata?.id) {
+        handleClick(data);
+      }
+    }
+  }
 
   const handleClick = useCallback(
     (node: NodeProps) => {

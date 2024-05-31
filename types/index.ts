@@ -88,6 +88,7 @@ export type NodeProps = {
   z: number;
   description: string;
   document: { pageContent: string };
+  metadata: any;
 };
 
 export type MicrophoneProps = {
