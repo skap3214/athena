@@ -10,8 +10,6 @@ import generateUUID, { generateUniqueUUID } from "@/lib/id";
 import { Vectorstore, ragChain, resetVectorstore } from "./config";
 import { prepareDocuments } from "@/lib/graph";
 
-
-
 export async function* updateGraphStreaming(
   text?: string,
   url?: string,
@@ -128,30 +126,29 @@ export async function* updateGraphStreaming(
 
 export async function* chatStreaming(
   question: string,
-  type: 'raw' | 'node' | 'edge' = 'node'
+  type: "raw" | "node" | "edge" = "node",
 ): AsyncGenerator<any, void, unknown> {
-
   // Create retriever
   const retriever = Vectorstore.asRetriever({
     k: 5,
-    filter: (document) => document.metadata.docType == type
+    filter: (document) => document.metadata.docType == type,
   });
 
   const documents = await retriever.invoke(question);
   const context = formatDocumentsAsString(documents);
 
   const input = {
-    'context': context,
-    'input': question
+    context: context,
+    input: question,
   };
   const stream = await ragChain.stream(input);
 
   for await (const chunk of stream) {
     const out = {
       token: chunk,
-      source: documents
-    }
+      source: documents,
+    };
 
-    yield out
+    yield out;
   }
-};
+}

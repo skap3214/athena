@@ -34,35 +34,59 @@ const ForceGraphComponent = () => {
         ...prevHistory,
         { role: "human", text: inputText },
       ]);
-      setTimeout(() => {
-        fetch("/api/chat", {
+
+      try {
+        const response = await fetch("/api/chat", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
           },
           body: JSON.stringify({
             question: inputText,
-            type: 'node'
+            type: "node",
           }),
-        })
-        .then((response) => response.body)
-        .then((body) => {
-          const reader = body?.getReader();
-          const decoder = new TextDecoder();
-          reader?.read().then(function chatStream({ done, value }) {
-            if (done) {
-              return;
-            }
-            const data = JSON.parse(decoder.decode(value));
-            console.log(data);
-            setHistory((prevHistory) => [
-              ...prevHistory,
-              { role: "ai", text: "" + data.token },
-            ]);
-          })
+        });
 
-        })
-      }, 1000);
+        const reader = response.body?.getReader();
+        const decoder = new TextDecoder();
+        let streamedText = "";
+
+        if (reader) {
+          let accumulatedText = "";
+          while (true) {
+            const { done, value } = await reader.read();
+            if (done) break;
+
+            streamedText += decoder.decode(value, { stream: true });
+            const lines = streamedText
+              .split("\n")
+              .filter((line) => line.trim());
+
+            lines.forEach((line) => {
+              try {
+                const data = JSON.parse(line);
+                accumulatedText += data.token;
+
+                setHistory((prevHistory) => {
+                  const newHistory = [...prevHistory];
+                  const lastMessage = newHistory[newHistory.length - 1];
+                  if (lastMessage && lastMessage.role === "ai") {
+                    lastMessage.text = accumulatedText;
+                  } else {
+                    newHistory.push({ role: "ai", text: accumulatedText });
+                  }
+                  return newHistory;
+                });
+              } catch (error) {
+                console.error("Error parsing JSON:", error);
+              }
+            });
+            streamedText = "";
+          }
+        }
+      } catch (error) {
+        console.error("Error streaming chat response:", error);
+      }
       return;
     }
     fetch("/api/add", {
