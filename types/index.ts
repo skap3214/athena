@@ -83,6 +83,7 @@ export type Message = {
 };
 
 export type NodeProps = {
+  id: string;
   x: number;
   y: number;
   z: number;
@@ -93,4 +94,9 @@ export type NodeProps = {
 
 export type MicrophoneProps = {
   onTranscription: (transcription: string) => void;
+};
+
+export type LinkProps = {
+  source: NodeProps;
+  target: NodeProps;
 };

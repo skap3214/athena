@@ -3,26 +3,18 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { ForceGraph3D } from "react-force-graph";
 import * as THREE from "three";
 import { UnrealBloomPass } from "three/examples/jsm/Addons.js";
-import { NodeProps } from "@/types";
+import { LinkProps, NodeProps } from "@/types";
 import { X } from "lucide-react";
 import { Button } from "./ui/button";
 
+const NODE_R = 8;
+
 const Graph = ({ graph, source }: any) => {
   const [doc, setDoc] = useState<NodeProps | null>(null);
+  const [highlightNodes, setHighlightNodes] = useState(new Set());
+  const [highlightLinks, setHighlightLinks] = useState(new Set());
+  const [hoverNode, setHoverNode] = useState<NodeProps | null>(null);
   const fgRef = useRef<any>();
-
-  useEffect(() => {
-    if (source.length === 0) return;
-    mapNodes(source[0]);
-  }, [source]);
-
-  function mapNodes(source: NodeProps) {
-    for (const data of graph.nodes) {
-      if (data.id === source?.metadata?.id) {
-        handleClick(data);
-      }
-    }
-  }
 
   const handleClick = useCallback(
     (node: NodeProps) => {
@@ -37,6 +29,56 @@ const Graph = ({ graph, source }: any) => {
     },
     [fgRef],
   );
+
+  const findConnections = (nodeId: string) => {
+    const connections: any = [];
+    if (graph !== null) {
+      for (const connection of graph.links) {
+        if (
+          connection.source.id === nodeId ||
+          connection.target.id === nodeId
+        ) {
+          connections.push({
+            connection,
+          });
+        }
+      }
+      return connections;
+    }
+  };
+
+  const updateHighlight = () => {
+    setHighlightNodes(new Set(highlightNodes));
+    setHighlightLinks(new Set(highlightLinks));
+  };
+
+  const handleNodeHighlight = (node: NodeProps) => {
+    highlightNodes.clear();
+    highlightLinks.clear();
+    if (node) {
+      highlightNodes.add(node);
+      findConnections(node.id)?.forEach((connection: any) =>
+        highlightNodes.add(connection.connection.target),
+      );
+      findConnections(node.id)?.forEach((connection: any) =>
+        highlightLinks.add(connection.connection),
+      );
+    }
+    setHoverNode(node || null);
+    updateHighlight();
+  };
+
+  const handleLinkHighlight = (link: LinkProps) => {
+    console.log(link);
+    highlightNodes.clear();
+    highlightLinks.clear();
+    if (link) {
+      highlightLinks.add(link);
+      highlightNodes.add(link.source);
+      highlightNodes.add(link.target);
+    }
+    updateHighlight();
+  };
 
   useEffect(() => {
     const bloomPass = new UnrealBloomPass(
@@ -72,14 +114,40 @@ const Graph = ({ graph, source }: any) => {
         <ForceGraph3D
           ref={fgRef}
           backgroundColor="black"
-          graphData={graph!}
+          graphData={graph}
           nodeLabel="description"
           nodeAutoColorBy="id"
           onNodeClick={handleClick}
           showNavInfo={false}
           linkLabel="content"
           linkAutoColorBy="content"
-          linkWidth={2}
+          linkWidth={(link) => (highlightLinks.has(link) ? 6 : 1)}
+          linkDirectionalParticles={4}
+          linkDirectionalParticleWidth={(link) =>
+            highlightLinks.has(link) ? 6 : 0
+          }
+          onNodeHover={handleNodeHighlight as any}
+          onLinkHover={handleLinkHighlight as any}
+          nodeThreeObject={(node) => {
+            const obj = new THREE.Mesh(
+              new THREE.SphereGeometry(NODE_R),
+              new THREE.MeshBasicMaterial({
+                color: highlightNodes.has(node) ? "yellow" : node.color,
+              }),
+            );
+            if (highlightNodes.has(node)) {
+              const ring = new THREE.Mesh(
+                new THREE.RingGeometry(NODE_R * 1.4, NODE_R * 1.6, 32),
+                new THREE.MeshBasicMaterial({
+                  side: THREE.DoubleSide,
+                }),
+              );
+              ring.position.set(node.x, node.y, node.z);
+              ring.lookAt(fgRef.current.cameraPosition());
+              obj.add(ring);
+            }
+            return obj;
+          }}
         />
       )}
     </div>
