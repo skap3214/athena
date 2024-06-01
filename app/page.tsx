@@ -91,7 +91,7 @@ const ForceGraphComponent = () => {
       }
       return;
     }
-    fetch("/api/add", {
+    fetch("http://127.0.0.1:8000/add", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -111,6 +111,7 @@ const ForceGraphComponent = () => {
           }
 
           const graphData = JSON.parse(decoder.decode(value));
+          console.log(graphData);
           setGraph((prevGraph) => {
             const newGraph = {
               nodes: [...prevGraph.nodes, ...graphData.nodes],
