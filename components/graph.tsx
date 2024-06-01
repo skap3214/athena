@@ -13,7 +13,6 @@ const Graph = ({ graph, source }: any) => {
   const [doc, setDoc] = useState<NodeProps | null>(null);
   const [highlightNodes, setHighlightNodes] = useState(new Set());
   const [highlightLinks, setHighlightLinks] = useState(new Set());
-  const [hoverNode, setHoverNode] = useState<NodeProps | null>(null);
   const fgRef = useRef<any>();
 
   const handleClick = useCallback(
@@ -65,7 +64,6 @@ const Graph = ({ graph, source }: any) => {
         highlightLinks.add(connection.connection),
       );
     }
-    setHoverNode(node || null);
     updateHighlight();
   };
 
