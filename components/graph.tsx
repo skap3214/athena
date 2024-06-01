@@ -57,9 +57,10 @@ const Graph = ({ graph, source }: any) => {
     highlightLinks.clear();
     if (node) {
       highlightNodes.add(node);
-      findConnections(node.id)?.forEach((connection: any) =>
-        highlightNodes.add(connection.connection.target),
-      );
+      findConnections(node.id)?.forEach((connection: any) => {
+        highlightNodes.add(connection.connection.target);
+        highlightNodes.add(connection.connection.source);
+      });
       findConnections(node.id)?.forEach((connection: any) =>
         highlightLinks.add(connection.connection),
       );
@@ -69,7 +70,6 @@ const Graph = ({ graph, source }: any) => {
   };
 
   const handleLinkHighlight = (link: LinkProps) => {
-    console.log(link);
     highlightNodes.clear();
     highlightLinks.clear();
     if (link) {
