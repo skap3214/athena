@@ -7,6 +7,7 @@ import Microphone from "./microphone";
 import { cn } from "@/lib/utils";
 import Message from "./message";
 import useScroll from "@/hooks/use-scroll";
+import Markdown from "react-markdown";
 
 const Magic = ({
   handleSubmit,
@@ -35,7 +36,7 @@ const Magic = ({
         >
           {history.map((message: MessageType, index: number) => (
             <Message key={index} role={message.role}>
-              {message.text}
+              <Markdown>{message.text}</Markdown>
             </Message>
           ))}
         </div>
