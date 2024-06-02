@@ -4,8 +4,9 @@ import dynamic from "next/dynamic";
 import NoGraph from "@/components/no-graph";
 import Magic from "@/components/magic";
 import { filteredGraph } from "@/lib/graph";
-import { ModeProps, Message } from "@/types";
+import { ModeProps, Message, GraphNode, GraphEdge } from "@/types";
 import Loading from "@/components/loading";
+import { Document } from "langchain/document";
 
 const Graph = dynamic(() => import("../components/graph"), {
   ssr: false,
@@ -111,11 +112,35 @@ const ForceGraphComponent = () => {
           }
 
           const graphData = JSON.parse(decoder.decode(value));
-          console.log(graphData);
+          const document = graphData.document
+          const relations = graphData.relations
+          console.log(document);
+          console.log(relations);
+          let nodes: GraphNode[] = []
+          let links: GraphEdge[] = []
+          for (const rel_list of relations) {
+            console.log(rel_list);
+            nodes.push({
+              description: rel_list.node_1.name,
+              document: new Document({pageContent: document.page_content, metadata: document.metadata}),
+              id: rel_list.node_1.id
+            })
+            nodes.push({
+              description: rel_list.node_2.name,
+              document: new Document({pageContent: document.page_content, metadata: document.metadata}),
+              id: rel_list.node_2.id
+            })
+            links.push({
+              source: rel_list.node_1.name,
+              target: rel_list.node_2.name,
+              content: rel_list.edge.name,
+              id: rel_list.edge.id
+            })
+          }
           setGraph((prevGraph) => {
             const newGraph = {
-              nodes: [...prevGraph.nodes, ...graphData.nodes],
-              links: [...prevGraph.links, ...graphData.links],
+              nodes: [...prevGraph.nodes, ...nodes],
+              links: [...prevGraph.links, ...links],
             };
             return filteredGraph(newGraph);
           });

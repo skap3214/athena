@@ -1,0 +1,121 @@
+{
+    "nodes": [
+      {
+        "id": "0755e4be-8f02-5801-83d8-6bc1d4fa3135",
+        "description": "implementation",
+        "document": {
+          "pageContent": "This implementation includes the filteredGraph function to remove duplicate nodes and links from the graph based on their IDs and returns a filtered graph. The submit function processes the fetched data and updates the graph state with the filtered graph.",
+          "metadata": {}
+        }
+      },
+      {
+        "id": "e23a73b0-7769-5d61-a4eb-80d18ca1b7df",
+        "description": "filteredGraph function",
+        "document": {
+          "pageContent": "This implementation includes the filteredGraph function to remove duplicate nodes and links from the graph based on their IDs and returns a filtered graph. The submit function processes the fetched data and updates the graph state with the filtered graph.",
+          "metadata": {}
+        }
+      },
+      {
+        "id": "7cd9840b-998f-5309-b55b-94e765e5d8b6",
+        "description": "remove duplicate nodes",
+        "document": {
+          "pageContent": "This implementation includes the filteredGraph function to remove duplicate nodes and links from the graph based on their IDs and returns a filtered graph. The submit function processes the fetched data and updates the graph state with the filtered graph.",
+          "metadata": {}
+        }
+      },
+      {
+        "id": "43e16f7e-f721-530d-94f2-07469bada43d",
+        "description": "remove duplicate links",
+        "document": {
+          "pageContent": "This implementation includes the filteredGraph function to remove duplicate nodes and links from the graph based on their IDs and returns a filtered graph. The submit function processes the fetched data and updates the graph state with the filtered graph.",
+          "metadata": {}
+        }
+      },
+      {
+        "id": "7b0e9a37-c8af-5dbe-aa8d-4ac304cffe21",
+        "description": "graph",
+        "document": {
+          "pageContent": "This implementation includes the filteredGraph function to remove duplicate nodes and links from the graph based on their IDs and returns a filtered graph. The submit function processes the fetched data and updates the graph state with the filtered graph.",
+          "metadata": {}
+        }
+      },
+      {
+        "id": "5201e742-10ce-5c74-bc22-945c490abf90",
+        "description": "submit function",
+        "document": {
+          "pageContent": "This implementation includes the filteredGraph function to remove duplicate nodes and links from the graph based on their IDs and returns a filtered graph. The submit function processes the fetched data and updates the graph state with the filtered graph.",
+          "metadata": {}
+        }
+      },
+      {
+        "id": "37efe116-f850-536c-81b1-55b6b3e621d3",
+        "description": "fetched data",
+        "document": {
+          "pageContent": "This implementation includes the filteredGraph function to remove duplicate nodes and links from the graph based on their IDs and returns a filtered graph. The submit function processes the fetched data and updates the graph state with the filtered graph.",
+          "metadata": {}
+        }
+      },
+      {
+        "id": "e4afa655-515e-5d54-9246-d2a655925c66",
+        "description": "graph state",
+        "document": {
+          "pageContent": "This implementation includes the filteredGraph function to remove duplicate nodes and links from the graph based on their IDs and returns a filtered graph. The submit function processes the fetched data and updates the graph state with the filtered graph.",
+          "metadata": {}
+        }
+      },
+      {
+        "id": "fb7d87a9-9a76-547b-8838-dc8ac516a27d",
+        "description": "filtered graph",
+        "document": {
+          "pageContent": "This implementation includes the filteredGraph function to remove duplicate nodes and links from the graph based on their IDs and returns a filtered graph. The submit function processes the fetched data and updates the graph state with the filtered graph.",
+          "metadata": {}
+        }
+      }
+    ],
+    "links": [
+      {
+        "id": "5fdf2f1c-6980-5909-b505-f31cfb807596",
+        "content": "includes",
+        "source": "0755e4be-8f02-5801-83d8-6bc1d4fa3135",
+        "target": "e23a73b0-7769-5d61-a4eb-80d18ca1b7df"
+      },
+      {
+        "id": "1d566c7e-08d6-5eaf-9246-c31c6fc04373",
+        "content": "is used to",
+        "source": "e23a73b0-7769-5d61-a4eb-80d18ca1b7df",
+        "target": "7cd9840b-998f-5309-b55b-94e765e5d8b6"
+      },
+      {
+        "id": "1d566c7e-08d6-5eaf-9246-c31c6fc04373",
+        "content": "is used to",
+        "source": "e23a73b0-7769-5d61-a4eb-80d18ca1b7df",
+        "target": "43e16f7e-f721-530d-94f2-07469bada43d"
+      },
+      {
+        "id": "66523ed6-2063-501c-b8d6-307a133910d6",
+        "content": "updates",
+        "source": "e23a73b0-7769-5d61-a4eb-80d18ca1b7df",
+        "target": "7b0e9a37-c8af-5dbe-aa8d-4ac304cffe21"
+      },
+      {
+        "id": "b6834179-5c0c-52df-9061-f67dd98e7b7d",
+        "content": "processes",
+        "source": "5201e742-10ce-5c74-bc22-945c490abf90",
+        "target": "37efe116-f850-536c-81b1-55b6b3e621d3"
+      },
+      {
+        "id": "66523ed6-2063-501c-b8d6-307a133910d6",
+        "content": "updates",
+        "source": "5201e742-10ce-5c74-bc22-945c490abf90",
+        "target": "e4afa655-515e-5d54-9246-d2a655925c66"
+      },
+      {
+        "id": "16702d2d-3286-5f51-99a2-58fc7a15dc79",
+        "content": "is updated with",
+        "source": "e4afa655-515e-5d54-9246-d2a655925c66",
+        "target": "fb7d87a9-9a76-547b-8838-dc8ac516a27d"
+      }
+    ]
+  }
+  
