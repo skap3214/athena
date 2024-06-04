@@ -38,14 +38,14 @@ const ForceGraphComponent = () => {
       ]);
 
       try {
-        const response = await fetch("/api/chat", {
+        const response = await fetch("http://127.0.0.1:8000/chat", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
           },
           body: JSON.stringify({
-            question: inputText,
-            type: "node",
+            query: inputText,
+            chat_type: "node",
           }),
         });
 
@@ -67,8 +67,8 @@ const ForceGraphComponent = () => {
             lines.forEach((line) => {
               try {
                 const data = JSON.parse(line);
-                accumulatedText += data.token;
-                if (source !== data.source) setSource(data.source);
+                accumulatedText += data.delta;
+                if (source !== data.source) setSource(data.sources);
 
                 setHistory((prevHistory) => {
                   const newHistory = [...prevHistory];
@@ -131,13 +131,17 @@ const ForceGraphComponent = () => {
               id: rel_list.node_2.id
             })
             links.push({
-              source: rel_list.node_1.name,
-              target: rel_list.node_2.name,
+              source: rel_list.node_1.id,
+              target: rel_list.node_2.id,
               content: rel_list.edge.name,
               id: rel_list.edge.id
             })
           }
+          console.log(nodes);
+          console.log(links);
           setGraph((prevGraph) => {
+            console.log(prevGraph.nodes);
+            console.log(prevGraph.links);
             const newGraph = {
               nodes: [...prevGraph.nodes, ...nodes],
               links: [...prevGraph.links, ...links],
