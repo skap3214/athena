@@ -41,7 +41,7 @@ const ForceGraphComponent = () => {
       ]);
 
       try {
-        const response = await fetch("http://127.0.0.1:8000/chat", {
+        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/chat`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -96,7 +96,7 @@ const ForceGraphComponent = () => {
       }
       return;
     }
-    fetch("http://127.0.0.1:8000/add", {
+    fetch(`${process.env.NEXT_PUBLIC_API_URL}/add`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -121,12 +121,9 @@ const ForceGraphComponent = () => {
           const graphData = JSON.parse(decoder.decode(value));
           const document = graphData.document;
           const relations = graphData.relations;
-          console.log(document);
-          console.log(relations);
           let nodes: GraphNode[] = [];
           let links: GraphEdge[] = [];
           for (const rel_list of relations) {
-            console.log(rel_list);
             nodes.push({
               description: rel_list.node_1.name,
               document: new Document({
@@ -150,11 +147,7 @@ const ForceGraphComponent = () => {
               id: rel_list.edge.id,
             });
           }
-          console.log(nodes);
-          console.log(links);
           setGraph((prevGraph) => {
-            console.log(prevGraph.nodes);
-            console.log(prevGraph.links);
             const newGraph = {
               nodes: [...prevGraph.nodes, ...nodes],
               links: [...prevGraph.links, ...links],

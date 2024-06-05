@@ -44,7 +44,7 @@ const Graph = ({ graph, source: sources }: any) => {
   const handleClick = useCallback(
     (node: NodeProps) => {
       setDoc(node);
-      const distance = 40;
+      const distance = 150;
       const distRatio = 1 + distance / Math.hypot(node.x, node.y, node.z);
       fgRef.current?.cameraPosition(
         { x: node.x * distRatio, y: node.y * distRatio, z: node.z * distRatio },
