@@ -1,4 +1,5 @@
-import { Dispatch, SetStateAction } from "react";
+import { Document } from "langchain/document";
+import { Dispatch, FormEventHandler, SetStateAction } from "react";
 
 export type FileUploaderProps = {
   focus: boolean;
@@ -19,10 +20,28 @@ export type Node = {
 export type Edge = {
   id: string;
   data: string;
-  from: string; // Node id
-  to: string; // Node id
+  from: string;
+  to: string;
   page_content: string;
   metadata?: Record<string, any>;
+};
+
+export type GraphNode = {
+  id: string;
+  description: string;
+  document: Document;
+};
+
+export type GraphEdge = {
+  id: string;
+  content: string;
+  source: string;
+  target: string;
+};
+
+export type GraphData = {
+  nodes: GraphNode[];
+  links: GraphEdge[];
 };
 
 export type RecommendValueProps = {
@@ -39,4 +58,45 @@ export type ModalStore = {
   isOpen: boolean;
   onOpen: () => void;
   onClose: () => void;
+};
+
+export type NoGraphProps = {
+  onSubmit: (input: string) => void;
+  loading: boolean;
+  setLoading: Dispatch<boolean>;
+};
+
+export type ModeProps = "chat" | "default";
+
+export type MagicProps = {
+  handleSubmit: FormEventHandler<HTMLFormElement>;
+  input: string;
+  setInput: Dispatch<string>;
+  onTranscription: (transcription: string) => void;
+  mode: ModeProps;
+  history: any;
+};
+
+export type Message = {
+  role: "ai" | "human";
+  text: string;
+};
+
+export type NodeProps = {
+  id: string;
+  x: number;
+  y: number;
+  z: number;
+  description: string;
+  document: { pageContent: string };
+  metadata: any;
+};
+
+export type MicrophoneProps = {
+  onTranscription: (transcription: string) => void;
+};
+
+export type LinkProps = {
+  source: NodeProps;
+  target: NodeProps;
 };

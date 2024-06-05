@@ -1,11 +1,11 @@
 import type { Metadata } from "next";
-import { GeistSans } from "geist/font/sans";
 import "./globals.css";
 import { Toaster } from "sonner";
-import Hero from "@/components/hero";
 import { ThemeProvider } from "next-themes";
 import { Analytics } from "@vercel/analytics/react";
 import { ModalProvider } from "@/providers/modal-provider";
+import Header from "@/components/header";
+import { GeistMono } from "geist/font/mono";
 
 export const metadata: Metadata = {
   title: "athena",
@@ -31,10 +31,13 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={`${GeistSans.className} selection:bg-purple-700 selection:text-white`}>
-        <ThemeProvider attribute="class" storageKey="theme">
+      <body
+        className={`${GeistMono.className} selection:bg-purple-700 selection:text-white`}
+      >
+        <ThemeProvider attribute="class" defaultTheme="dark" storageKey="theme">
           <Analytics />
-          <Hero>{children}</Hero>
+          <Header />
+          {children}
           <Toaster />
           <ModalProvider />
         </ThemeProvider>

@@ -1,66 +1,16 @@
 import { Document } from "langchain/document";
-// import { PDFLoader } from "langchain/document_loaders/fs/pdf";
-import { RecursiveCharacterTextSplitter } from "langchain/text_splitter";
-import { ChatOpenAI } from "@langchain/openai";
-import { ChatPromptTemplate } from "@langchain/core/prompts";
-import { StringOutputParser } from "@langchain/core/output_parsers";
-// import fs from 'fs';
-// import os from 'os';
-// import path from 'path';
 import { YoutubeGrabTool } from "@/lib/youtube";
+import { Vectorstore, extractChain } from "./config";
+import { RecursiveCharacterTextSplitter } from "langchain/text_splitter";
+import { GraphData, GraphEdge, GraphNode } from "@/types";
 
-function getVideoId(videoUrl: string): string {
-  const match = videoUrl.match(
-    /(?:(?:https?:)?\/\/)?(?:www\.)?youtu(?:be\.com\/watch\?v=|\.be\/)([\w\-]+)/,
-  );
-  return match ? match[1] : "";
-}
 const splitter = new RecursiveCharacterTextSplitter({
   chunkSize: 500,
   chunkOverlap: 30,
 });
-const contextString: string = `
-You are a network graph maker who extracts terms and their relations from a given context. You are provided with a context chunk (delimited by \`\`\`) Your task is to extract the ontology of terms mentioned in the given context. These terms should represent the key concepts as per the context. 
-Thought 1: While traversing through each sentence, Think about the key terms mentioned in it.
-    Terms may include object, entity, location, organization, person, 
-    condition, acronym, documents, service, concept, etc.
-    Terms should be as atomistic and singular as possible.
-
-Thought 2: Think about how these terms can have one on one relation with other terms.
-    Terms that are mentioned in the same sentence or the same paragraph are typically related to each other.
-    Terms can be related to many other terms
-
-Thought 3: Find out the relation between each such related pair of terms. 
-
-Format your output as a list of json. Each element of the list contains a pair of terms and the relation between them, like the following: 
-[
-   {{
-       "node_1": "A concept from extracted ontology",
-       "node_2": "A related concept from extracted ontology",
-       "edge": "relationship between the two concepts, node_1 and node_2 in one or two sentences"
-   }}, {{...}}
-]
-YOUR RESPONSE SHOULD ALWAYS BE JSON COMPATIBLE. Do not add markdown in your response, just plain JSON.`;
-const prompt = ChatPromptTemplate.fromMessages([
-  ["system", contextString],
-  ["human", "{input}"],
-]);
-const model = new ChatOpenAI({ temperature: 0.1 });
-const outputParser = new StringOutputParser();
-const extract_chain = prompt.pipe(model).pipe(outputParser);
-
-// export async function loadFromYoutubeLink(url: string): Promise<Document[]> {
-//     const loader = YoutubeLoader.createFromUrl(url, {
-//         addVideoInfo: false,
-//     });
-
-//     const documents = await loader.load();
-
-//     return documents;
-// }
 
 export async function loadFromYoutubeLink(url: string): Promise<Document[]> {
-  const videoId = getVideoId(url);
+  const videoId = YoutubeGrabTool.retrieveVideoId(url);
   const transcript = await YoutubeGrabTool.fetchTranscript(videoId);
   let documents: Document[] = [];
 
@@ -142,25 +92,37 @@ export async function splitDocuments(
 export async function extractRelations(
   documents: Document[],
 ): Promise<Map<string, any>[]> {
-  const relations = await extract_chain.batch(
-    documents.map((doc) => ({ input: doc.pageContent })),
-  );
+  console.log("Extracting...");
+  let relations: Map<string, any>[] = [];
+  let count = 1;
+  console.log("Extracting from: ", documents.length);
+  for (const doc of documents) {
+    console.log(`extracting doc ${count}`);
+    count++;
+    const rel_list: any = await extractChain.invoke({
+      input: doc.pageContent,
+    });
+    console.log(rel_list);
+    relations.push(rel_list);
+  }
+  console.log(relations);
+  return relations;
+}
 
-  const relationsOutput = relations.map((rel_list) => {
-    if (rel_list.startsWith("```json") && rel_list.endsWith("```")) {
-      // Remove the markdown formatting
-      const jsonString = rel_list.slice(7, -3).trim();
-      return JSON.parse(jsonString);
-    } else {
-      try {
-        // Assume the rel_list is a direct JSON string
-        return JSON.parse(rel_list);
-      } catch (error) {
-        // console.log("Failed JSON parsing: ", error);
-        return [];
-      }
-    }
-  });
-
-  return relationsOutput;
+export async function* extractRelationsStreaming(
+  documents: Document[],
+): AsyncGenerator<any, void, unknown> {
+  let count = 1;
+  console.log("Documents: ", documents.length);
+  for (const doc of documents) {
+    console.log(`Extract doc no.${count}`);
+    count++;
+    const rel_list: any = await extractChain.invoke({
+      input: doc.pageContent,
+    });
+    yield {
+      relations: rel_list,
+      document: doc,
+    };
+  }
 }

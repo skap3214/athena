@@ -10,12 +10,13 @@ import {
 } from "@/components/ui/dialog";
 import { useModal } from "@/hooks/use-modal-store";
 import SignInButton from "../sign-in-button";
+import { GeistSans } from "geist/font/sans";
 
 export function AuthModal() {
   const { isOpen, onClose } = useModal();
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-[425px]">
+      <DialogContent className={`sm:max-w-[425px] ${GeistSans.className}`}>
         <DialogHeader>
           <DialogTitle>Welcome</DialogTitle>
           <DialogDescription>

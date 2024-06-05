@@ -1,82 +1,207 @@
 "use client";
-import { checkInputType } from "@/lib/check-input-type";
-import { useRouter } from "next/navigation";
-import { useState } from "react";
-import { updateGraph } from "./actions";
-import { toast } from "sonner";
-import SubmitArea from "@/components/submit-area";
+import { useEffect, useState } from "react";
+import dynamic from "next/dynamic";
+import NoGraph from "@/components/no-graph";
+import Magic from "@/components/magic";
+import { filteredGraph } from "@/lib/graph";
+import { ModeProps, Message, GraphNode, GraphEdge } from "@/types";
 import Loading from "@/components/loading";
-import RecommendValue from "@/components/recommend-value";
-import CommunityGraph from "@/components/community-graph";
+import { Document } from "langchain/document";
 import getUser from "@/hooks/get-user";
-import { useModal } from "@/hooks/use-modal-store";
-import SignInButton from "@/components/sign-in-button";
-import { cn } from "@/lib/utils";
 
-export default function Component() {
-  const user = getUser();
-  const router = useRouter();
-  const [value, setValue] = useState("");
+const Graph = dynamic(() => import("../components/graph"), {
+  ssr: false,
+});
 
+const ForceGraphComponent = () => {
+  const [source, setSource] = useState<any>([]);
   const [loading, setLoading] = useState(false);
-  const { onOpen } = useModal();
+  const [input, setInput] = useState("");
+  const userId: string | undefined = getUser()?.id;
+  const [graph, setGraph] = useState<{ nodes: any[]; links: any[] }>({
+    nodes: [],
+    links: [],
+  });
+  const [history, setHistory] = useState<Message[]>([]);
+  const [mode, setMode] = useState<ModeProps>("default");
 
-  const submit = async (input: string | File) => {
-    if (!input) return;
-    if (
-      !(input instanceof File) &&
-      !checkInputType(input) &&
-      input.length < 100
-    ) {
-      toast.warning("Input should be atleast a 100 words");
-      return;
-    }
-    if (!user?.id) {
-      onOpen();
-      return;
-    }
-    setValue("");
-    try {
-      setLoading(true);
-      if (input instanceof File) {
-        await updateGraph(undefined, undefined, input);
-      } else {
-        const isYoutube = checkInputType(input);
-        if (isYoutube) {
-          await updateGraph(undefined, input);
-        } else {
-          await updateGraph(input);
-        }
-      }
-      router.push("/graph");
-    } catch (err) {
-      toast.error("Internal server error");
-      setLoading(false);
-    }
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    submit(input);
+    setInput("");
   };
 
-  return (
-    <section className="h-screen w-full flex mx-5 md:mx-10 lg:mx-20 2xl:mx-0 flex-col justify-center items-center">
-      <div className={cn("absolute top-0 left-0 p-2 hidden", !user && "flex")}>
-        <SignInButton />
-      </div>
-      <h1 className="font-bold tracking-tighter text-5xl xl:text-6xl/none">
-        athena.
-      </h1>
-      <h2 className="text-md md:text-xl mt-2 font-light text-primary/60">
-        graph of knowledge. made by you.
-      </h2>
-      {loading ? (
+  const submit = async (inputText: string) => {
+    if (!userId) return;
+    if (!inputText) return;
+    if (mode === "chat") {
+      setHistory((prevHistory) => [
+        ...prevHistory,
+        { role: "human", text: inputText },
+      ]);
+
+      try {
+        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/chat`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            query: inputText,
+            user_id: userId,
+            chat_type: "node",
+          }),
+        });
+
+        const reader = response.body?.getReader();
+        const decoder = new TextDecoder();
+        let accumulatedText = "";
+        let accumulatedJson = "";
+
+        if (reader) {
+          while (true) {
+            const { done, value } = await reader.read();
+            if (done) break;
+
+            accumulatedJson += decoder.decode(value, { stream: true });
+
+            let boundary = accumulatedJson.lastIndexOf("}");
+            if (boundary !== -1) {
+              try {
+                const completeJson = accumulatedJson.slice(0, boundary + 1);
+                accumulatedJson = accumulatedJson.slice(boundary + 1);
+
+                const parsedData = JSON.parse(completeJson);
+                accumulatedText += parsedData.delta;
+                if (source !== parsedData.source) setSource(parsedData.sources);
+
+                setHistory((prevHistory) => {
+                  const newHistory = [...prevHistory];
+                  const lastMessage = newHistory[newHistory.length - 1];
+                  if (lastMessage && lastMessage.role === "ai") {
+                    lastMessage.text = accumulatedText;
+                  } else {
+                    newHistory.push({ role: "ai", text: accumulatedText });
+                  }
+                  return newHistory;
+                });
+              } catch (error) {
+                console.error("Error parsing JSON:", error);
+              }
+            }
+          }
+        }
+      } catch (error) {
+        console.error("Error streaming chat response:", error);
+      }
+      return;
+    }
+    fetch(`${process.env.NEXT_PUBLIC_API_URL}/add`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        text: inputText,
+        user_id: userId,
+        init: graph.nodes.length < 1,
+        stream: true,
+      }),
+    })
+      .then((response) => response.body)
+      .then((body) => {
+        const reader = body?.getReader();
+        const decoder = new TextDecoder();
+
+        reader?.read().then(function processText({ done, value }) {
+          if (done) {
+            return;
+          }
+
+          const graphData = JSON.parse(decoder.decode(value));
+          const document = graphData.document;
+          const relations = graphData.relations;
+          let nodes: GraphNode[] = [];
+          let links: GraphEdge[] = [];
+          for (const rel_list of relations) {
+            nodes.push({
+              description: rel_list.node_1.name,
+              document: new Document({
+                pageContent: document.page_content,
+                metadata: document.metadata,
+              }),
+              id: rel_list.node_1.id,
+            });
+            nodes.push({
+              description: rel_list.node_2.name,
+              document: new Document({
+                pageContent: document.page_content,
+                metadata: document.metadata,
+              }),
+              id: rel_list.node_2.id,
+            });
+            links.push({
+              source: rel_list.node_1.id,
+              target: rel_list.node_2.id,
+              content: rel_list.edge.name,
+              id: rel_list.edge.id,
+            });
+          }
+          setGraph((prevGraph) => {
+            const newGraph = {
+              nodes: [...prevGraph.nodes, ...nodes],
+              links: [...prevGraph.links, ...links],
+            };
+            return filteredGraph(newGraph);
+          });
+
+          reader.read().then(processText);
+        });
+      });
+  };
+
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "k" && (event.metaKey || event.ctrlKey)) {
+        event.preventDefault();
+        setMode((prevMode) => (prevMode === "default" ? "chat" : "default"));
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, []);
+
+  if (loading && graph.nodes.length === 0) {
+    return (
+      <div className="h-screen items-center w-full flex border justify-center">
         <Loading />
-      ) : (
+      </div>
+    );
+  }
+
+  return (
+    <div className="max-h-screen">
+      {graph.nodes.length > 0 ? (
         <>
-          <SubmitArea value={value} setValue={setValue} submit={submit} />
-          <RecommendValue handleClick={(value) => submit(value)} />
-          <div className="absolute bottom-0 mb-8">
-            <CommunityGraph />
-          </div>
+          <Graph graph={graph} source={source} />
+          <Magic
+            input={input}
+            setInput={setInput}
+            handleSubmit={handleSubmit}
+            onTranscription={submit}
+            mode={mode}
+            history={history}
+          />
         </>
+      ) : (
+        <NoGraph onSubmit={submit} loading={loading} setLoading={setLoading} />
       )}
-    </section>
+    </div>
   );
-}
+};
+
+export default ForceGraphComponent;
