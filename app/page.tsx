@@ -65,7 +65,7 @@ const ForceGraphComponent = () => {
 
             accumulatedJson += decoder.decode(value, { stream: true });
 
-            let boundary = accumulatedJson.lastIndexOf('}');
+            let boundary = accumulatedJson.lastIndexOf("}");
             if (boundary !== -1) {
               try {
                 const completeJson = accumulatedJson.slice(0, boundary + 1);
@@ -105,7 +105,7 @@ const ForceGraphComponent = () => {
         text: inputText,
         user_id: userId,
         init: graph.nodes.length < 1,
-        stream: true
+        stream: true,
       }),
     })
       .then((response) => response.body)
@@ -119,30 +119,36 @@ const ForceGraphComponent = () => {
           }
 
           const graphData = JSON.parse(decoder.decode(value));
-          const document = graphData.document
-          const relations = graphData.relations
+          const document = graphData.document;
+          const relations = graphData.relations;
           console.log(document);
           console.log(relations);
-          let nodes: GraphNode[] = []
-          let links: GraphEdge[] = []
+          let nodes: GraphNode[] = [];
+          let links: GraphEdge[] = [];
           for (const rel_list of relations) {
             console.log(rel_list);
             nodes.push({
               description: rel_list.node_1.name,
-              document: new Document({ pageContent: document.page_content, metadata: document.metadata }),
-              id: rel_list.node_1.id
-            })
+              document: new Document({
+                pageContent: document.page_content,
+                metadata: document.metadata,
+              }),
+              id: rel_list.node_1.id,
+            });
             nodes.push({
               description: rel_list.node_2.name,
-              document: new Document({ pageContent: document.page_content, metadata: document.metadata }),
-              id: rel_list.node_2.id
-            })
+              document: new Document({
+                pageContent: document.page_content,
+                metadata: document.metadata,
+              }),
+              id: rel_list.node_2.id,
+            });
             links.push({
               source: rel_list.node_1.id,
               target: rel_list.node_2.id,
               content: rel_list.edge.name,
-              id: rel_list.edge.id
-            })
+              id: rel_list.edge.id,
+            });
           }
           console.log(nodes);
           console.log(links);

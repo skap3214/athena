@@ -9,11 +9,37 @@ import { Button } from "./ui/button";
 
 const NODE_R = 8;
 
-const Graph = ({ graph, source }: any) => {
+const Graph = ({ graph, source: sources }: any) => {
   const [doc, setDoc] = useState<NodeProps | null>(null);
   const [highlightNodes, setHighlightNodes] = useState(new Set());
   const [highlightLinks, setHighlightLinks] = useState(new Set());
   const fgRef = useRef<any>();
+
+  useEffect(() => {
+    if (sources.length === 0) return;
+    handleClick(mapNodeIdToNode(sources[0].node_1.id));
+    for (const source of sources) {
+      highlightNodes.add(mapNodeIdToNode(source.node_1.id));
+      highlightNodes.add(mapNodeIdToNode(source.node_2.id));
+      highlightLinks.add(mapLinkIdToLink(source.edge.id));
+    }
+  }, [sources]);
+
+  function mapNodeIdToNode(nodeId: string) {
+    for (const node of graph.nodes) {
+      if (node.id === nodeId) {
+        return node;
+      }
+    }
+  }
+
+  function mapLinkIdToLink(linkId: string) {
+    for (const link of graph.links) {
+      if (link.id === linkId) {
+        return link;
+      }
+    }
+  }
 
   const handleClick = useCallback(
     (node: NodeProps) => {
