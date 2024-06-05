@@ -56,19 +56,21 @@ const ForceGraphComponent = () => {
         const reader = response.body?.getReader();
         const decoder = new TextDecoder();
         let streamedText = "";
+        let accumulatedText = "";
+        let accumulatedJson = "";
 
         if (reader) {
-          let accumulatedText = "";
           while (true) {
             const { done, value } = await reader.read();
             if (done) break;
 
             streamedText += decoder.decode(value, { stream: true });
-            console.log(streamedText);
+
             try {
-              const data = JSON.parse(streamedText);
-              accumulatedText += data.delta;
-              if (source !== data.source) setSource(data.sources);
+              accumulatedJson += streamedText;
+              const parsedData = JSON.parse(accumulatedJson);
+              accumulatedText += parsedData.delta;
+              if (source !== parsedData.source) setSource(parsedData.sources);
 
               setHistory((prevHistory) => {
                 const newHistory = [...prevHistory];
@@ -80,15 +82,14 @@ const ForceGraphComponent = () => {
                 }
                 return newHistory;
               });
+              accumulatedJson = "";
             } catch (error) {
-              throw error;
-              console.error("Error parsing JSON:", error);
+              console.log(error)
             }
             streamedText = "";
           }
         }
       } catch (error) {
-        throw error
         console.error("Error streaming chat response:", error);
       }
       return;
@@ -127,12 +128,12 @@ const ForceGraphComponent = () => {
             console.log(rel_list);
             nodes.push({
               description: rel_list.node_1.name,
-              document: new Document({pageContent: document.page_content, metadata: document.metadata}),
+              document: new Document({ pageContent: document.page_content, metadata: document.metadata }),
               id: rel_list.node_1.id
             })
             nodes.push({
               description: rel_list.node_2.name,
-              document: new Document({pageContent: document.page_content, metadata: document.metadata}),
+              document: new Document({ pageContent: document.page_content, metadata: document.metadata }),
               id: rel_list.node_2.id
             })
             links.push({
