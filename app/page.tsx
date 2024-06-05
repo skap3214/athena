@@ -7,6 +7,7 @@ import { filteredGraph } from "@/lib/graph";
 import { ModeProps, Message, GraphNode, GraphEdge } from "@/types";
 import Loading from "@/components/loading";
 import { Document } from "langchain/document";
+import getUser from "@/hooks/get-user";
 
 const Graph = dynamic(() => import("../components/graph"), {
   ssr: false,
@@ -16,6 +17,7 @@ const ForceGraphComponent = () => {
   const [source, setSource] = useState<any>([]);
   const [loading, setLoading] = useState(false);
   const [input, setInput] = useState("");
+  const userId: string | undefined = getUser()?.id;
   const [graph, setGraph] = useState<{ nodes: any[]; links: any[] }>({
     nodes: [],
     links: [],
@@ -30,6 +32,7 @@ const ForceGraphComponent = () => {
   };
 
   const submit = async (inputText: string) => {
+    if (!userId) return;
     if (!inputText) return;
     if (mode === "chat") {
       setHistory((prevHistory) => [
@@ -45,6 +48,7 @@ const ForceGraphComponent = () => {
           },
           body: JSON.stringify({
             query: inputText,
+            user_id: userId,
             chat_type: "node",
           }),
         });
@@ -60,34 +64,31 @@ const ForceGraphComponent = () => {
             if (done) break;
 
             streamedText += decoder.decode(value, { stream: true });
-            const lines = streamedText
-              .split("\n")
-              .filter((line) => line.trim());
+            console.log(streamedText);
+            try {
+              const data = JSON.parse(streamedText);
+              accumulatedText += data.delta;
+              if (source !== data.source) setSource(data.sources);
 
-            lines.forEach((line) => {
-              try {
-                const data = JSON.parse(line);
-                accumulatedText += data.delta;
-                if (source !== data.source) setSource(data.sources);
-
-                setHistory((prevHistory) => {
-                  const newHistory = [...prevHistory];
-                  const lastMessage = newHistory[newHistory.length - 1];
-                  if (lastMessage && lastMessage.role === "ai") {
-                    lastMessage.text = accumulatedText;
-                  } else {
-                    newHistory.push({ role: "ai", text: accumulatedText });
-                  }
-                  return newHistory;
-                });
-              } catch (error) {
-                console.error("Error parsing JSON:", error);
-              }
-            });
+              setHistory((prevHistory) => {
+                const newHistory = [...prevHistory];
+                const lastMessage = newHistory[newHistory.length - 1];
+                if (lastMessage && lastMessage.role === "ai") {
+                  lastMessage.text = accumulatedText;
+                } else {
+                  newHistory.push({ role: "ai", text: accumulatedText });
+                }
+                return newHistory;
+              });
+            } catch (error) {
+              throw error;
+              console.error("Error parsing JSON:", error);
+            }
             streamedText = "";
           }
         }
       } catch (error) {
+        throw error
         console.error("Error streaming chat response:", error);
       }
       return;
@@ -99,6 +100,10 @@ const ForceGraphComponent = () => {
       },
       body: JSON.stringify({
         text: inputText,
+        user_id: userId,
+        // graph_id: "1", Add this back once we allow multiple "conversations" per user_id
+        init: graph.nodes.length < 1,
+        stream: true
       }),
     })
       .then((response) => response.body)
