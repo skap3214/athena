@@ -55,7 +55,6 @@ const ForceGraphComponent = () => {
 
         const reader = response.body?.getReader();
         const decoder = new TextDecoder();
-        let streamedText = "";
         let accumulatedText = "";
         let accumulatedJson = "";
 
@@ -64,29 +63,32 @@ const ForceGraphComponent = () => {
             const { done, value } = await reader.read();
             if (done) break;
 
-            streamedText += decoder.decode(value, { stream: true });
+            accumulatedJson += decoder.decode(value, { stream: true });
 
-            try {
-              accumulatedJson += streamedText;
-              const parsedData = JSON.parse(accumulatedJson);
-              accumulatedText += parsedData.delta;
-              if (source !== parsedData.source) setSource(parsedData.sources);
+            let boundary = accumulatedJson.lastIndexOf('}');
+            if (boundary !== -1) {
+              try {
+                const completeJson = accumulatedJson.slice(0, boundary + 1);
+                accumulatedJson = accumulatedJson.slice(boundary + 1);
 
-              setHistory((prevHistory) => {
-                const newHistory = [...prevHistory];
-                const lastMessage = newHistory[newHistory.length - 1];
-                if (lastMessage && lastMessage.role === "ai") {
-                  lastMessage.text = accumulatedText;
-                } else {
-                  newHistory.push({ role: "ai", text: accumulatedText });
-                }
-                return newHistory;
-              });
-              accumulatedJson = "";
-            } catch (error) {
-              console.log(error)
+                const parsedData = JSON.parse(completeJson);
+                accumulatedText += parsedData.delta;
+                if (source !== parsedData.source) setSource(parsedData.sources);
+
+                setHistory((prevHistory) => {
+                  const newHistory = [...prevHistory];
+                  const lastMessage = newHistory[newHistory.length - 1];
+                  if (lastMessage && lastMessage.role === "ai") {
+                    lastMessage.text = accumulatedText;
+                  } else {
+                    newHistory.push({ role: "ai", text: accumulatedText });
+                  }
+                  return newHistory;
+                });
+              } catch (error) {
+                console.error("Error parsing JSON:", error);
+              }
             }
-            streamedText = "";
           }
         }
       } catch (error) {
@@ -102,7 +104,6 @@ const ForceGraphComponent = () => {
       body: JSON.stringify({
         text: inputText,
         user_id: userId,
-        // graph_id: "1", Add this back once we allow multiple "conversations" per user_id
         init: graph.nodes.length < 1,
         stream: true
       }),
