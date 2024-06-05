@@ -60,8 +60,8 @@ const extractPrompt = ChatPromptTemplate.fromMessages([
 const extractOutputParser = new JsonOutputParser();
 
 export const extractChain = extractPrompt
-  .pipe(ExtractLLM)
-  .pipe(extractOutputParser);
+  .pipe(ExtractLLM as any)
+  .pipe(extractOutputParser as any);
 
 // RAG chat chain
 const ragSystemPrompt: string = `\
@@ -79,4 +79,5 @@ export const ragPrompt = ChatPromptTemplate.fromMessages([
 
 export const ragOutputParser = new StringOutputParser();
 
+//@ts-ignore
 export const ragChain = ragPrompt.pipe(ChatLLM).pipe(ragOutputParser);
